@@ -1,5 +1,5 @@
 location:
-  lat: 45.5902
+  lat: 46.5902
   lon: -120.6707
 
 prepare:
@@ -18,6 +18,10 @@ time:
 
 metrics:
   - rmse
+  - bias
+  - bias_pct
+  - mae
+  - mae_pct
 
 left:
   name: ex1

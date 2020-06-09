@@ -32,7 +32,7 @@ right = conf["right"]
 
 # Load the module t class with the name s
 def get_module_class(t,s):
-
+  
   m = importlib.import_module(".".join([t,s]))
 
   return getattr(m,s)
@@ -46,6 +46,7 @@ def apply_trans(ts,modlist):
   return ts
 
 def get_dap_file(path,config):
+
   api_url = "https://dteuqmpcac.execute-api.us-west-2.amazonaws.com/test/request-data"
   out_dir = config["cache_dir"] + "/dap/" + path  
   credentials = base64.b64encode("%s:%s" % (config["login"], config["pass"]))
@@ -118,10 +119,11 @@ def time_align(conf,x,y):
       x = x[x.index >= lower]
     
   return (x,y)
-    
 
 # Pre-load all the metric modules into an array
 metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
+print(conf["metrics"])
+print(metrics)
 
 # Pre-load all the qa/qc modules into an array
 preproc = []

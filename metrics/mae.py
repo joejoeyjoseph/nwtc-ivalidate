@@ -1,22 +1,20 @@
-# rmse.py
+# mae.py
 #
-# This is a naive root mean squared error (RMSE) calculation, 
-# rmse = root(mean((x - y)^2))
+# This is a simple average mae calculation, mae = mean(|x - y|). 
 #
 # If the input vectors differ, it takes the first N elements of each
 # so that the size is the same. Error is computed pairwise without regard
 # to the timestamps.
 #
-# Caleb Phillips <caleb.phillips@nrel.gov>
 # Joseph Lee <joseph.lee@nrel.gov>
 
 
 import numpy as np
 
-class rmse:
+class mae:
 
   def compute(self,x,y):
-
+    
     # just values (second member of tuple)
     # note: this isn't time aligning at all, just compares the 
     #       values as they arrive
@@ -28,5 +26,8 @@ class rmse:
       x = x[0:len(y)]
     if len(y) > len(x):
       y = y[0:len(x)]
-      
-    return float(np.sqrt(np.mean((np.array(x) - np.array(y))**2)))
+
+    print(x,y)
+    print(np.array(x) - np.array(y))
+
+    return float(np.mean(abs(np.array(x) - np.array(y))))
