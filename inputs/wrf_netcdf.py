@@ -40,6 +40,7 @@ class wrf_netcdf:
     for l in os.listdir(self.path):
 
       ih = Dataset(self.path + "/" + l, 'r')
+      #print(ih.variables)
       i,j = self.get_ij(ih,loc)
       s = "".join(map(bytes.decode, ih.variables["Times"][0]))
       t = datetime.strptime(s, "%Y-%m-%d_%H:%M:%S")

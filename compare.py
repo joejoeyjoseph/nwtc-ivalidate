@@ -28,7 +28,7 @@ sys.path.append('.')
 
 #conf = yaml.load(open(sys.argv[1]), Loader=yaml.FullLoader)
 conf = yaml.load(open(config_file), Loader=yaml.FullLoader)
-#print(conf)
+
 left = conf["left"]
 right = conf["right"]
 
@@ -142,12 +142,18 @@ left["path"] = get_file(left["path"], None) # local files
 left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
 left["data"] = apply_trans(left["input"].get_ts(conf["location"]),preproc)
 
+plotting = get_module_class('plotting', 'plot_ts')
+plotting.plot_line(left)
+
 for i in range(0,len(right)):
 
   #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
   right[i]["path"] = get_file(right[i]["path"], None) # local files
   right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
   right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
+
+  plotting.plot_line(right[i])
+
   results.append({"path": right[i]["path"], "var": right[i]["var"], "location": conf["location"]})
 
   for m in metrics:
@@ -161,15 +167,12 @@ for i in range(0,len(right)):
 # Output the results
 #print(json.dumps(results))
 
-print('start time:', conf['time']["window"]["lower"])
-print('end time:', conf['time']["window"]["lower"])
+print('validation start time:', conf['time']["window"]["lower"])
+print('validation end time:', conf['time']["window"]["upper"])
 
-#print(results[0].keys[0])
 print((results[0]['path']))
 for key, val in results[0].items():
-  #print(type(val))
   if isinstance(val, float): 
-    #print('aaa')
     print(str(key)+': '+str(np.round(val, 3)))
   else: 
     print(str(key)+': '+str(val))
