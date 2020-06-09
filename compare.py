@@ -2,8 +2,6 @@
 #
 # This script runs the comparison between timeseries data as specified in config.yaml
 #
-# Usage: python compare.py config.yaml
-#
 # Caleb Phillips <caleb.phillips@nrel.gov>
 # Joseph Lee <joseph.lee@nrel.gov>
 
@@ -15,15 +13,22 @@ import dateutil
 import re
 import base64
 import requests
+import os
+import pathlib
+import numpy as np
+
+config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
+
 sys.path.append('.')
 
 # Check options and load config
-if len(sys.argv) < 2:
-  print("Usage: python compare.py <config.yaml>")
-  quit()
+# if len(sys.argv) < 2:
+#   print("Usage: python compare.py <config.yaml>")
+#   quit()
 
-#conf = yaml.load(file(sys.argv[1],'r'))
-conf = yaml.load(open(sys.argv[1]), Loader=yaml.FullLoader)
+#conf = yaml.load(open(sys.argv[1]), Loader=yaml.FullLoader)
+conf = yaml.load(open(config_file), Loader=yaml.FullLoader)
+#print(conf)
 left = conf["left"]
 right = conf["right"]
 
@@ -32,7 +37,7 @@ right = conf["right"]
 
 # Load the module t class with the name s
 def get_module_class(t,s):
-  
+
   m = importlib.import_module(".".join([t,s]))
 
   return getattr(m,s)
@@ -122,8 +127,6 @@ def time_align(conf,x,y):
 
 # Pre-load all the metric modules into an array
 metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
-print(conf["metrics"])
-print(metrics)
 
 # Pre-load all the qa/qc modules into an array
 preproc = []
@@ -135,14 +138,14 @@ for q in conf["prepare"]:
 results = []
 
 #left["path"] = get_file(left["path"],conf["remote"])
-left["path"] = get_file(left["path"], None)
+left["path"] = get_file(left["path"], None) # local files
 left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
 left["data"] = apply_trans(left["input"].get_ts(conf["location"]),preproc)
 
 for i in range(0,len(right)):
 
   #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
-  right[i]["path"] = get_file(right[i]["path"], None)
+  right[i]["path"] = get_file(right[i]["path"], None) # local files
   right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
   right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
   results.append({"path": right[i]["path"], "var": right[i]["var"], "location": conf["location"]})
@@ -150,9 +153,23 @@ for i in range(0,len(right)):
   for m in metrics:
 
     x,y = time_align(conf["time"],left["data"],right[i]["data"])
+
     results[i][m.__class__.__name__] = m.compute(x,y)
 
 # FIXME: allow different output formats besides JSON
 
 # Output the results
-print(json.dumps(results))
+#print(json.dumps(results))
+
+print('start time:', conf['time']["window"]["lower"])
+print('end time:', conf['time']["window"]["lower"])
+
+#print(results[0].keys[0])
+print((results[0]['path']))
+for key, val in results[0].items():
+  #print(type(val))
+  if isinstance(val, float): 
+    #print('aaa')
+    print(str(key)+': '+str(np.round(val, 3)))
+  else: 
+    print(str(key)+': '+str(val))

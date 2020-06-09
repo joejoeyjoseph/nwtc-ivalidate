@@ -27,7 +27,4 @@ class mae:
     if len(y) > len(x):
       y = y[0:len(x)]
 
-    print(x,y)
-    print(np.array(x) - np.array(y))
-
     return float(np.mean(abs(np.array(x) - np.array(y))))

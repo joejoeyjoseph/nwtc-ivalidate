@@ -30,6 +30,7 @@ class linear_interp:
     return np.linspace(tmin,tmax,math.ceil(n))
 
   def apply(self,ts):
+    
     t = [time.mktime(x.timetuple()) for x in ts.index]
     v = ts.to_numpy()[:,0]
 

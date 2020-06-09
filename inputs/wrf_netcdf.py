@@ -10,6 +10,7 @@
 # Joseph Lee <joseph.lee@nrel.gov>
 
 import os
+import pathlib
 from datetime import datetime
 from netCDF4 import Dataset
 import numpy as np
@@ -18,11 +19,11 @@ import pandas as pd
 class wrf_netcdf:
 
   def __init__(self,path,var):
-    self.path = path
+    self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
 
   def get_ij(self,ih,loc):
-    
+
     lat = np.array(ih["XLAT"][0])
     lon = np.array(ih["XLONG"][0])
     # if lat/lon were arrays (instead of matrixes) something like this would work:
