@@ -16,12 +16,19 @@ import base64
 import requests
 sys.path.append('.')
 
+print(sys.executable)
+
 # Check options and load config
 if len(sys.argv) < 2:
-  print "Usage: python compare.py <config.yaml>"
+  print("Usage: python compare.py <config.yaml>")
   quit()
 
-conf = yaml.load(file(sys.argv[1],'r'))
+print(sys.argv)
+print('b')
+
+#conf = yaml.load(file(sys.argv[1],'r'))
+conf = yaml.load(open(sys.argv[1]), Loader=yaml.FullLoader)
+print(conf)
 left = conf["left"]
 right = conf["right"]
 
@@ -56,7 +63,7 @@ def get_dap_file(path,config):
     }
   }
 
-  print params
+  print(params)
 
   req = requests.post(api_url, headers=auth, data=json.dumps(params), verify=False)
   print(req.text)
@@ -79,7 +86,7 @@ def get_file(path,remote):
 
 def time_align(conf,x,y):
   # apply time window
-  if "window" in conf.keys():
+  if "window" in list(conf.keys()):
     if conf["window"]["lower"].__class__.__name__ != 'datetime':
       lower = dateutil.parser.parse(conf["window"]["lower"])
     else:
@@ -95,7 +102,7 @@ def time_align(conf,x,y):
     y = y[y.index >= lower]
 
   # trim to extent of left or right
-  if "trim" in conf.keys():
+  if "trim" in list(conf.keys()):
     if conf["trim"] == "left":
       lower = x.index.min()
       upper = x.index.max()
@@ -121,11 +128,13 @@ for q in conf["prepare"]:
 
 # Load the data and compute the metrics
 results = []
-left["path"] = get_file(left["path"],conf["remote"])
+#left["path"] = get_file(left["path"],conf["remote"])
+left["path"] = get_file(left["path"], None)
 left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
 left["data"] = apply_trans(left["input"].get_ts(conf["location"]),preproc)
 for i in range(0,len(right)):
-  right[i]["path"] = get_file(right[i]["path"],conf["remote"])
+  #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
+  right[i]["path"] = get_file(right[i]["path"], None)
   right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
   right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
   results.append({"path": right[i]["path"], "var": right[i]["var"], "location": conf["location"]})
@@ -136,4 +145,4 @@ for i in range(0,len(right)):
 # FIXME: allow different output formats besides JSON
 
 # Output the results
-print json.dumps(results)
+print(json.dumps(results))

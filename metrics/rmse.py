@@ -17,8 +17,10 @@ class rmse:
     # just values (second member of tuple)
     # note: this isn't time aligning at all, just compares the 
     #       values as they arrive
-    x = x.as_matrix()[:,0]
-    y = y.as_matrix()[:,0]
+    #x = x.as_matrix()[:,0]
+    x = x.to_numpy()[:,0]
+    #y = y.as_matrix()[:,0]
+    y = y.to_numpy()[:,0]
     # naively truncate longer array if one is shorter
     if len(x) > len(y):
       x = x[0:len(y)]
