@@ -13,7 +13,7 @@ prepare:
 time:
   window:
     lower: 2016-03-07 06:00:00
-    upper: 2016-03-07 10:00:00
+    upper: 2016-03-07 12:00:00
   trim: left # can be left or right
 
 metrics:

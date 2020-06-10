@@ -143,7 +143,9 @@ left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var
 left["data"] = apply_trans(left["input"].get_ts(conf["location"]),preproc)
 
 plotting = get_module_class('plotting', 'plot_ts')
-plotting.plot_line(left)
+#plotting.plot_line(left) # plot all data
+
+print('model:')
 
 for i in range(0,len(right)):
 
@@ -152,15 +154,22 @@ for i in range(0,len(right)):
   right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
   right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
 
-  plotting.plot_line(right[i])
+  #plotting.plot_line(right[i]) # plot all data
 
-  results.append({"path": right[i]["path"], "var": right[i]["var"], "location": conf["location"]})
+  results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], "location": conf["location"], \
+                  "var": right[i]["var"]})
 
   for m in metrics:
 
-    x,y = time_align(conf["time"],left["data"],right[i]["data"])
+    x, y = time_align(conf["time"],left["data"],right[i]["data"])
 
     results[i][m.__class__.__name__] = m.compute(x,y)
+
+  plotting.plot_subset_line(y, right[i]['name'])
+
+print('truth:')
+
+plotting.plot_subset_line(x, left['name'])
 
 # FIXME: allow different output formats besides JSON
 
@@ -170,9 +179,10 @@ for i in range(0,len(right)):
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
 
-print((results[0]['path']))
+#print((results[0]['path']))
 for key, val in results[0].items():
-  if isinstance(val, float): 
-    print(str(key)+': '+str(np.round(val, 3)))
-  else: 
-    print(str(key)+': '+str(val))
+  if key != 'path': 
+    if isinstance(val, float): 
+      print(str(key)+': '+str(np.round(val, 3)))
+    else: 
+      print(str(key)+': '+str(val))

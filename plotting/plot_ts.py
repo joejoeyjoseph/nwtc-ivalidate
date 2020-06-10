@@ -18,3 +18,12 @@ class plot_ts:
 
     plt.show()
 
+  def plot_subset_line(self, data_name):
+
+    self.plot()
+
+    plt.ylabel(self.columns[0])
+    plt.title(data_name)
+
+    plt.show()
+
