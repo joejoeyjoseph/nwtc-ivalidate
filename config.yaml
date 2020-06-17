@@ -1,6 +1,6 @@
 location:
-  lat: 46.5902
-  lon: -120.6707
+  lat: 45.57451
+  lon: -120.74734
 
 prepare:
   - trim:
@@ -8,12 +8,12 @@ prepare:
       upper: 1000.0
   - linear_interp:
       #n: 23
-      period: 500
+      period: 300 # every 300 second, according to WRF output's resolution
 
 time:
   window:
-    lower: 2016-03-07 06:00:00
-    upper: 2016-03-07 12:00:00
+    lower: 2016-09-23 12:00:00
+    upper: 2016-09-25 12:00:00
   trim: left # can be left or right
 
 metrics:
@@ -24,13 +24,17 @@ metrics:
   - mae_pct
 
 left:
-  name: ex1
-  path: data/ex1
+  name: wrf
+  path: data/mw_data_wrf
+  #path: data/testing1
   format: wrf_netcdf
-  var: WSPD80
+  var: 
+    - u
+    - v
 
 right:
-  - name: ex2
-    path: data/ex2
-    format: wrf_netcdf
-    var: WSPD80
+  - name: sodar
+    path: data/mw_data_sodar
+    #path: data/testing2
+    format: sodar_netcdf
+    var: wind_speed

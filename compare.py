@@ -45,6 +45,9 @@ def get_module_class(t,s):
 # Apply a series of transformative modules
 def apply_trans(ts,modlist):
 
+  # print('modlist')
+  # print(modlist)
+
   for m in modlist:
     ts = m.apply(ts)
 
@@ -140,7 +143,13 @@ results = []
 #left["path"] = get_file(left["path"],conf["remote"])
 left["path"] = get_file(left["path"], None) # local files
 left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
-left["data"] = apply_trans(left["input"].get_ts(conf["location"]),preproc)
+left["data"] = apply_trans(left["input"].get_var_ts(conf["location"]), preproc)
+
+#print('left')
+#print(left["data"])
+
+#print(preproc)
+#print(apply_trans(left["input"]))
 
 plotting = get_module_class('plotting', 'plot_ts')
 #plotting.plot_line(left) # plot all data
@@ -152,12 +161,19 @@ for i in range(0,len(right)):
   #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
   right[i]["path"] = get_file(right[i]["path"], None) # local files
   right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
+
+  #print('right')
+  #print(right[i]["input"].get_ts(conf["location"]))
+  #print('done here')
+
   right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
+
+  #print(right[i]["data"])
 
   #plotting.plot_line(right[i]) # plot all data
 
-  results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], "location": conf["location"], \
-                  "var": right[i]["var"]})
+  results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], \
+                  "location": conf["location"], "var": right[i]["var"]})
 
   for m in metrics:
 

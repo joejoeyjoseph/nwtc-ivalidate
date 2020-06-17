@@ -22,6 +22,10 @@ class bias:
     x = x.to_numpy()[:,0]
     y = y.to_numpy()[:,0]
 
+    # print('bias')
+    # print(len(x))
+    # print(len(y))
+
     # naively truncate longer array if one is shorter
     if len(x) > len(y):
       x = x[0:len(y)]

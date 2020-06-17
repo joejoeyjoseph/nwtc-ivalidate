@@ -35,6 +35,9 @@ class linear_interp:
     v = ts.to_numpy()[:,0]
 
     tprime = self.get_sample_ts(t)
+
+    v = np.array(v, dtype=np.float64)
+
     vprime = np.interp(tprime,t,v)
 
     tprime = [datetime.datetime.fromtimestamp(x) for x in tprime]
