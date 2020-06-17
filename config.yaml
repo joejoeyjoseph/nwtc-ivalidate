@@ -8,7 +8,7 @@ prepare:
       upper: 1000.0
   - linear_interp:
       #n: 23
-      period: 300 # every 300 second, according to WRF output's resolution
+      period: 300 # every 300 second, according to WRF output's 5-minute resolution
 
 time:
   window:
@@ -23,18 +23,24 @@ metrics:
   - mae
   - mae_pct
 
+levels: 
+  height_agl: 
+    - 40
+    - 80
+    - 120
+
 left:
-  name: wrf
-  path: data/mw_data_wrf
-  #path: data/testing1
-  format: wrf_netcdf
-  var: 
-    - u
-    - v
+  name: sodar
+  path: data/mw_data_sodar
+  #path: data/testing2
+  format: sodar_netcdf
+  var: wind_speed
 
 right:
-  - name: sodar
-    path: data/mw_data_sodar
-    #path: data/testing2
-    format: sodar_netcdf
-    var: wind_speed
+  - name: wrf
+    path: data/mw_data_wrf
+    #path: data/testing1
+    format: wrf_netcdf
+    var: 
+      - u
+      - v

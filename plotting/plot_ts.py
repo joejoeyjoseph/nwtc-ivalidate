@@ -18,11 +18,11 @@ class plot_ts:
 
     plt.show()
 
-  def plot_subset_line(self, data_name):
+  def plot_subset_line(self, data_name, lev):
 
     self.plot()
 
-    plt.ylabel(self.columns[0])
+    plt.ylabel(self.columns[0]+' at '+str(lev)+' m a.g.l.')
     plt.title(data_name)
 
     plt.show()

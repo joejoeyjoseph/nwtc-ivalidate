@@ -69,7 +69,7 @@ class wrf_netcdf:
 
     return (i,j)
 
-  def get_var_ts(self,loc):
+  def get_var_ts(self,loc,lev):
 
     df = pd.DataFrame({"t": [], 'ws': []})
 
@@ -83,9 +83,11 @@ class wrf_netcdf:
       s = l.split('_')[2]+'_'+l.split('_')[3].split('.')[0]
       t = datetime.strptime(s, "%Y-%m-%d_%H:%M:%S")
 
-      level = 3
-      u = ih.variables[self.var[0]][level][i][j]
-      v = ih.variables[self.var[1]][level][i][j]
+      #level = 3
+      height_ind = np.where(ih['level'][:].data == lev)[0][0]
+      #print(height_ind)
+      u = ih.variables[self.var[0]][height_ind][i][j]
+      v = ih.variables[self.var[1]][height_ind][i][j]
       ws = np.sqrt(u**2 + v**2)
 
       ih.close()

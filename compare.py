@@ -137,68 +137,81 @@ for q in conf["prepare"]:
   k,c = q.popitem()
   preproc.append(get_module_class("prepare",k)(c))
 
-# Load the data and compute the metrics
-results = []
-
-#left["path"] = get_file(left["path"],conf["remote"])
-left["path"] = get_file(left["path"], None) # local files
-left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
-left["data"] = apply_trans(left["input"].get_var_ts(conf["location"]), preproc)
-
 #print('left')
 #print(left["data"])
 
 #print(preproc)
 #print(apply_trans(left["input"]))
 
+print('validation start time:', conf['time']["window"]["lower"])
+print('validation end time:', conf['time']["window"]["upper"])
+print('location:', conf['location'])
+print('variable:', left['var'])
+print('truth:', left['name'])
+
 plotting = get_module_class('plotting', 'plot_ts')
 #plotting.plot_line(left) # plot all data
 
-print('model:')
+#print('model:')
 
-for i in range(0,len(right)):
+#print(conf['levels']['height_agl'])
 
-  #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
-  right[i]["path"] = get_file(right[i]["path"], None) # local files
-  right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
+for lev in conf['levels']['height_agl']: 
 
-  #print('right')
-  #print(right[i]["input"].get_ts(conf["location"]))
-  #print('done here')
+  print('')
+  print('#########################################################################')
+  print('')
 
-  right[i]["data"] = apply_trans(right[i]["input"].get_ts(conf["location"]),preproc)
+  print('height a.g.l.:', str(lev))
 
-  #print(right[i]["data"])
+  # Load the data and compute the metrics
+  results = []
 
-  #plotting.plot_line(right[i]) # plot all data
+  #left["path"] = get_file(left["path"],conf["remote"])
+  left["path"] = get_file(left["path"], None) # local files
+  left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
+  left["data"] = apply_trans(left["input"].get_ts(conf["location"], lev), preproc)
 
-  results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], \
-                  "location": conf["location"], "var": right[i]["var"]})
+  for i in range(0,len(right)):
 
-  for m in metrics:
+    #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
+    right[i]["path"] = get_file(right[i]["path"], None) # local files
+    right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
 
-    x, y = time_align(conf["time"],left["data"],right[i]["data"])
+    #print('right')
+    #print(right[i]["input"].get_ts(conf["location"]))
+    #print('done here')
 
-    results[i][m.__class__.__name__] = m.compute(x,y)
+    right[i]["data"] = apply_trans(right[i]["input"].get_var_ts(conf["location"], lev),preproc)
 
-  plotting.plot_subset_line(y, right[i]['name'])
+    #print(right[i]["data"])
 
-print('truth:')
+    #plotting.plot_line(right[i]) # plot all data
 
-plotting.plot_subset_line(x, left['name'])
+    results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], \
+                    "location": conf["location"], "var": right[i]["var"]})
 
-# FIXME: allow different output formats besides JSON
+    for m in metrics:
 
-# Output the results
-#print(json.dumps(results))
+      x, y = time_align(conf["time"],left["data"],right[i]["data"])
 
-print('validation start time:', conf['time']["window"]["lower"])
-print('validation end time:', conf['time']["window"]["upper"])
+      results[i][m.__class__.__name__] = m.compute(x,y)
 
-#print((results[0]['path']))
-for key, val in results[0].items():
-  if key != 'path': 
-    if isinstance(val, float): 
-      print(str(key)+': '+str(np.round(val, 3)))
-    else: 
-      print(str(key)+': '+str(val))
+    print('model:', right[i]['name'])
+    plotting.plot_subset_line(y, right[i]['name'], lev)
+
+  print('truth:')
+  plotting.plot_subset_line(x, left['name'], lev)
+
+  # FIXME: allow different output formats besides JSON
+
+  # Output the results
+  #print(json.dumps(results))
+
+  #print((results[0]['path']))
+  for key, val in results[0].items():
+    if key != 'path': 
+      if isinstance(val, float): 
+        print(str(key)+': '+str(np.round(val, 3)))
+      # else: 
+      #   print(str(key)+': '+str(val))
