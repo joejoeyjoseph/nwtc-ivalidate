@@ -1,21 +1,28 @@
-location:
+# validation location
+location: 
+  # latitude and longitude in degrees
   lat: 45.57451
   lon: -120.74734
 
 prepare:
+  # align the length of validation period of two data sets
   - trim:
       lower: -1000.0
       upper: 1000.0
   - linear_interp:
       #n: 23
+      # resolution of input data
       period: 300 # every 300 second, according to WRF output's 5-minute resolution
 
 time:
   window:
+    # validation period start time
     lower: 2016-09-23 12:00:00
+    # validation period end time
     upper: 2016-09-25 12:00:00
   trim: left # can be left or right
 
+# validation metrics to be calculated and plotted
 metrics:
   - rmse
   - bias
@@ -24,23 +31,28 @@ metrics:
   - mae_pct
 
 levels: 
+  # height level of validation above ground level
   height_agl: 
     - 40
     - 80
     - 120
 
+# "truth" data input
 left:
   name: sodar
+  # data directory
   path: data/mw_data_sodar
-  #path: data/testing2
   format: sodar_netcdf
+  # variables to validate
   var: wind_speed
 
+# data input to be compared with the "truth" data input
 right:
   - name: wrf
+    # data directory
     path: data/mw_data_wrf
-    #path: data/testing1
     format: wrf_netcdf
+    # variables to validate
     var: 
       - u
       - v
