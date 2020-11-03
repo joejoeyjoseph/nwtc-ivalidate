@@ -80,7 +80,8 @@ class wrf_netcdf:
       ih = Dataset(self.path + "/" + l, 'r')
       i,j = self.get_var_ij(ih,loc)
 
-      s = l.split('_')[2]+'_'+l.split('_')[3].split('.')[0]
+      s = l.split('_')[2]+'_'+l.split('_')[3].split('.')[0]+':'\
+          +l.split('_')[4]+':'+l.split('_')[5].split('.')[0]
       t = datetime.strptime(s, "%Y-%m-%d_%H:%M:%S")
 
       #level = 3
