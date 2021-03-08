@@ -21,11 +21,20 @@ class crosscheck_ts:
     base = self.trim_ts(base)
     comp = self.trim_ts(comp)
 
-    print(base.index)
-    print(len(base))
+    # print(base)
+    # print(len(base))
 
-    print(comp.index)
-    print(len(comp))
+    # print(comp)
+    # print(len(comp))
+
+    # base ts as 1st column
+    combine_df = pd.merge(base, comp, left_index=True, right_index=True)
+
+    # print(combine_df)
+
+    return combine_df
+
+  
 
   # def trim_ts: 
 

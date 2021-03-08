@@ -16,7 +16,8 @@ import requests
 import os
 import pathlib
 import numpy as np
-import qc
+import pandas as pd
+import itertools
 
 config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
 
@@ -203,34 +204,56 @@ for lev in conf['levels']['height_agl']:
 
     #a = crosscheck_ts.trim_ts()
 
-    a = crosscheck_ts.trim_ts(base["data"])
+    # a = crosscheck_ts.trim_ts(base["data"])
 
-    crosscheck_ts.align_time(base["data"], comp[i]["data"])
+    combine_df = crosscheck_ts.align_time(base["data"], comp[i]["data"])
 
+    print(combine_df.columns)
 
+    for pair in itertools.combinations(combine_df.columns, 2): 
 
-    for m in metrics:
+      print(pair)
 
-      x, y = time_align(conf["time"],base["data"],comp[i]["data"])
-      # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
+      x = combine_df[pair[0]]
+      y = combine_df[pair[1]]
 
-      results[i][m.__class__.__name__] = m.compute(x,y)
+  #print(combine_df.loc[np.ma.is_masked(combine_df['sodar_ws'])])
 
-    print('model:', comp[i]['name'])
-    plotting.plot_subset_line(y, comp[i]['name'], lev)
+  print(combine_df['sodar_ws'].iloc[24:28])
+  print(combine_df['sodar_ws'].iloc[25])
+  print(np.ma.is_masked(combine_df['sodar_ws'].iloc[25])) <--- this
 
-  print('truth:')
-  plotting.plot_subset_line(x, base['name'], lev)
+  print(combine_df['sodar_ws'].loc[np.ma.is_masked(combine_df['sodar_ws'])])
 
-  # FIXME: allow different output formats besides JSON
+  #print(combine_df['sodar_ws'].loc[combine_df['t'] == '2016-09-23 16:00:00'])
 
-  # Output the results
-  #print(json.dumps(results))
+  pd.set_option("display.max_rows", None, "display.max_columns", None)
+  print(combine_df)
 
-  #print((results[0]['path']))
-  for key, val in results[0].items():
-    if key != 'path': 
-      if isinstance(val, float): 
-        print(str(key)+': '+str(np.round(val, 3)))
-      # else: 
-      #   print(str(key)+': '+str(val))
+  #   print(x)
+
+  #   for m in metrics:
+
+  #     # x, y = time_align(conf["time"],base["data"],comp[i]["data"])
+  #     # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
+
+  #     results[i][m.__class__.__name__] = m.compute(x, y)
+
+  #   print('model:', comp[i]['name'])
+  #   plotting.plot_subset_line(y, comp[i]['name'], lev)
+
+  # print('truth:')
+  # plotting.plot_subset_line(x, base['name'], lev)
+
+  # # FIXME: allow different output formats besides JSON
+
+  # # Output the results
+  # #print(json.dumps(results))
+
+  # #print((results[0]['path']))
+  # for key, val in results[0].items():
+  #   if key != 'path': 
+  #     if isinstance(val, float): 
+  #       print(str(key)+': '+str(np.round(val, 3)))
+  #     # else: 
+  #     #   print(str(key)+': '+str(val))
