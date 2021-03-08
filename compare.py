@@ -29,8 +29,8 @@ sys.path.append('.')
 #conf = yaml.load(open(sys.argv[1]), Loader=yaml.FullLoader)
 conf = yaml.load(open(config_file), Loader=yaml.FullLoader)
 
-left = conf["left"]
-right = conf["right"]
+base = conf['base']
+comp = conf['comp']
 
 # FIXME: validate configuration file and give nice errors
 #        if something (necessary) is missing
@@ -50,6 +50,7 @@ def apply_trans(ts,modlist):
 
   for m in modlist:
     ts = m.apply(ts)
+    #print(ts)
 
   return ts
 
@@ -112,15 +113,15 @@ def time_align(conf,x,y):
     y = y[y.index <= upper]
     y = y[y.index >= lower]
 
-  # trim to extent of left or right
+  # trim to extent of base or comp
   if "trim" in list(conf.keys()):
 
-    if conf["trim"] == "left":
+    if conf["trim"] == "base":
       lower = x.index.min()
       upper = x.index.max()
       y = y[y.index <= upper]
       y = y[y.index >= lower]
-    elif conf["trim"] == "right":
+    elif conf["trim"] == "comp":
       lower = y.index.min()
       upper = y.index.max()
       x = x[x.index <= upper]
@@ -137,24 +138,16 @@ for q in conf["prepare"]:
   k,c = q.popitem()
   preproc.append(get_module_class("prepare",k)(c))
 
-#print('left')
-#print(left["data"])
-
-#print(preproc)
-#print(apply_trans(left["input"]))
+print('preproc')
+print(preproc)
 
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
 print('location:', conf['location'])
-print('variable:', left['var'])
-print('truth:', left['name'])
+print('variable:', base['var'])
+print('truth:', base['name'])
 
 plotting = get_module_class('plotting', 'plot_ts')
-#plotting.plot_line(left) # plot all data
-
-#print('model:')
-
-#print(conf['levels']['height_agl'])
 
 for lev in conf['levels']['height_agl']: 
 
@@ -167,41 +160,34 @@ for lev in conf['levels']['height_agl']:
   # Load the data and compute the metrics
   results = []
 
-  #left["path"] = get_file(left["path"],conf["remote"])
-  left["path"] = get_file(left["path"], None) # local files
-  left["input"] = get_module_class("inputs",left["format"])(left["path"],left["var"])
-  left["data"] = apply_trans(left["input"].get_ts(conf["location"], lev), preproc)
+  # base["path"] = get_file(base["path"],conf["remote"])
+  base["path"] = get_file(base["path"], None) # local files
+  base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"])
+  base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
 
-  for i in range(0,len(right)):
+  for i in range(0,len(comp)):
 
-    #right[i]["path"] = get_file(right[i]["path"],conf["remote"])
-    right[i]["path"] = get_file(right[i]["path"], None) # local files
-    right[i]["input"] = get_module_class("inputs",right[i]["format"])(right[i]["path"],right[i]["var"])
+    #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
+    comp[i]["path"] = get_file(comp[i]["path"], None) # local files
+    comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"])
 
-    #print('right')
-    #print(right[i]["input"].get_ts(conf["location"]))
-    #print('done here')
+    comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
+    # comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev)
 
-    right[i]["data"] = apply_trans(right[i]["input"].get_var_ts(conf["location"], lev),preproc)
-
-    #print(right[i]["data"])
-
-    #plotting.plot_line(right[i]) # plot all data
-
-    results.append({'truth name': left['name'], 'model name': right[i]['name'], "path": right[i]["path"], \
-                    "location": conf["location"], "var": right[i]["var"]})
+    results.append({'truth name': base['name'], 'model name': comp[i]['name'], "path": comp[i]["path"], \
+                    "location": conf["location"], "var": comp[i]["var"]})
 
     for m in metrics:
 
-      x, y = time_align(conf["time"],left["data"],right[i]["data"])
+      x, y = time_align(conf["time"],base["data"],comp[i]["data"])
 
       results[i][m.__class__.__name__] = m.compute(x,y)
 
-    print('model:', right[i]['name'])
-    plotting.plot_subset_line(y, right[i]['name'], lev)
+    print('model:', comp[i]['name'])
+    plotting.plot_subset_line(y, comp[i]['name'], lev)
 
   print('truth:')
-  plotting.plot_subset_line(x, left['name'], lev)
+  plotting.plot_subset_line(x, base['name'], lev)
 
   # FIXME: allow different output formats besides JSON
 

@@ -9,10 +9,10 @@ prepare:
   - trim:
       lower: -1000.0
       upper: 1000.0
-  - linear_interp:
-      #n: 23
-      # resolution of input data
-      period: 300 # every 300 second, according to WRF output's 5-minute resolution
+  # - linear_interp1:
+  #     #n: 23
+  #     # resolution of input data
+  #     period: 300 # every 300 second, according to WRF output's 5-minute resolution
 
 time:
   window:
@@ -34,20 +34,22 @@ levels:
   # height level of validation above ground level
   height_agl: 
     - 40
-    - 80
-    - 120
+    # - 80
+    # - 120
 
 # "truth" data input
-left:
+base:
   name: sodar
   # data directory
   path: data/mw_data_sodar
   format: sodar_netcdf
   # variables to validate
   var: wind_speed
+  # data frequency in minutes
+  freq: 10
 
 # data input to be compared with the "truth" data input
-right:
+comp:
   - name: wrf
     # data directory
     path: data/mw_data_wrf
@@ -56,3 +58,5 @@ right:
     var: 
       - u
       - v
+    # data frequency in minutes
+    freq: 5
