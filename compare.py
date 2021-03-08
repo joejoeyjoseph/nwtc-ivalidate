@@ -16,6 +16,7 @@ import requests
 import os
 import pathlib
 import numpy as np
+import qc
 
 config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
 
@@ -141,11 +142,13 @@ for q in conf["prepare"]:
 print('preproc')
 print(preproc)
 
-print('validation start time:', conf['time']["window"]["lower"])
-print('validation end time:', conf['time']["window"]["upper"])
-print('location:', conf['location'])
-print('variable:', base['var'])
-print('truth:', base['name'])
+# print('validation start time:', conf['time']["window"]["lower"])
+# print('validation end time:', conf['time']["window"]["upper"])
+# print('location:', conf['location'])
+# print('variable:', base['var'])
+# print('truth:', base['name'])
+
+crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
 plotting = get_module_class('plotting', 'plot_ts')
 
@@ -163,7 +166,12 @@ for lev in conf['levels']['height_agl']:
   # base["path"] = get_file(base["path"],conf["remote"])
   base["path"] = get_file(base["path"], None) # local files
   base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"])
-  base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
+  # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
+  base["data"] = base["input"].get_ts(conf["location"], lev)
+
+  print('base')
+  #print(type(base))
+  #print(base["data"]) 
 
   for i in range(0,len(comp)):
 
@@ -171,15 +179,40 @@ for lev in conf['levels']['height_agl']:
     comp[i]["path"] = get_file(comp[i]["path"], None) # local files
     comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"])
 
-    comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
-    # comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev)
+    # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
+    comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev)
+
+    print('comp')
+    #print(type(comp[i]))
+    #print(comp[i]["data"]) 
 
     results.append({'truth name': base['name'], 'model name': comp[i]['name'], "path": comp[i]["path"], \
                     "location": conf["location"], "var": comp[i]["var"]})
 
+    #w = wrf_netcdf.get_ts(conf["location"])
+    #print(w)
+
+    #param = crosscheck_ts(conf)
+    #print(param)
+    #print(param[''])
+    
+    # conf['time']
+
+    print('crosscheck')
+    print(crosscheck_ts)
+
+    #a = crosscheck_ts.trim_ts()
+
+    a = crosscheck_ts.trim_ts(base["data"])
+
+    crosscheck_ts.align_time(base["data"], comp[i]["data"])
+
+
+
     for m in metrics:
 
       x, y = time_align(conf["time"],base["data"],comp[i]["data"])
+      # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
 
       results[i][m.__class__.__name__] = m.compute(x,y)
 
