@@ -27,6 +27,9 @@ class linear_interp:
     else:
       n = self.config["n"]
 
+    print('tmin, tmax')
+    print(tmin,tmax)
+
     return np.linspace(tmin,tmax,math.ceil(n))
 
   def apply(self,ts):
