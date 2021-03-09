@@ -97,40 +97,6 @@ def get_file(path,remote):
   elif proto == "dap":
     return get_dap_file(path,remote["dap"])
 
-def time_align(conf,x,y):
-  # apply time window
-  if "window" in list(conf.keys()):
-
-    if conf["window"]["lower"].__class__.__name__ != 'datetime':
-      lower = dateutil.parser.parse(conf["window"]["lower"])
-    else:
-      lower = conf["window"]["lower"]
-    if conf["window"]["upper"].__class__.__name__ != 'datetime':
-      upper = dateutil.parser.parse(conf["window"]["upper"])
-    else:
-      upper = conf["window"]["upper"]
-
-    x = x[x.index <= upper]
-    x = x[x.index >= lower]
-    y = y[y.index <= upper]
-    y = y[y.index >= lower]
-
-  # trim to extent of base or comp
-  if "trim" in list(conf.keys()):
-
-    if conf["trim"] == "base":
-      lower = x.index.min()
-      upper = x.index.max()
-      y = y[y.index <= upper]
-      y = y[y.index >= lower]
-    elif conf["trim"] == "comp":
-      lower = y.index.min()
-      upper = y.index.max()
-      x = x[x.index <= upper]
-      x = x[x.index >= lower]
-    
-  return (x,y)
-
 # Pre-load all the metric modules into an array
 metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
 
