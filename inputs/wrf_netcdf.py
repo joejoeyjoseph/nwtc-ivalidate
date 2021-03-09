@@ -17,14 +17,14 @@ import numpy as np
 import pandas as pd
 from qc import check_input_data
 
+target_var = 'wrf_ws'
+
 class wrf_netcdf:
 
   def __init__(self,path,var):
+
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
-
-    print('pathhh')
-    print(self.path)
 
   def get_ij(self,ih,loc):
 
@@ -73,13 +73,11 @@ class wrf_netcdf:
 
     return (i,j)
 
-  def get_var_ts(self,loc,lev):
+  def get_var_ts(self,loc,lev, freq):
 
-    df = pd.DataFrame({"t": [], 'wrf_ws': []})
+    df = pd.DataFrame({"t": [], target_var: []})
 
     for l in os.listdir(self.path):
-
-      #print(l)
 
       ih = Dataset(self.path + "/" + l, 'r')
       i,j = self.get_var_ij(ih,loc)
@@ -98,11 +96,10 @@ class wrf_netcdf:
       ws = check_input_data.convert_mask_to_nan(ws)
 
       ih.close()
-      df = df.append([{"t": t, 'wrf_ws': ws}])
+      df = df.append([{"t": t, target_var: ws}])
 
     df = df.set_index("t").sort_index()
 
-    print('get netcdf')
-    print('getttt')
+    check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
     return df

@@ -18,6 +18,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 import itertools
+from qc import check_input_data
 
 config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
 
@@ -131,7 +132,11 @@ for lev in conf['levels']['height_agl']:
   base["path"] = get_file(base["path"], None) # local files
   base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"])
   # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
-  base["data"] = base["input"].get_ts(conf["location"], lev)
+  base["data"] = base["input"].get_ts(conf["location"], lev, base['freq'])
+
+  check_input_data.test()
+
+  # base['freq']
 
   # print('base')
   #print(type(base))
@@ -144,7 +149,7 @@ for lev in conf['levels']['height_agl']:
     comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"])
 
     # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
-    comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev)
+    comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev, comp[i]['freq'])
 
     # print('comp')
     #print(type(comp[i]))
