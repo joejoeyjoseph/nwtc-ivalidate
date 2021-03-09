@@ -101,10 +101,10 @@ def get_file(path,remote):
 metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
 
 # Pre-load all the qa/qc modules into an array
-preproc = []
-for q in conf["prepare"]:
-  k,c = q.popitem()
-  preproc.append(get_module_class("prepare",k)(c))
+# preproc = []
+# for q in conf["prepare"]:
+#   k,c = q.popitem()
+#   preproc.append(get_module_class("prepare",k)(c))
 
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])

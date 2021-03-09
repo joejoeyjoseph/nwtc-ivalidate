@@ -20,7 +20,7 @@ time:
     lower: 2016-09-23 12:00:00
     # validation period end time
     upper: 2016-09-25 12:00:00
-  trim: left # can be left or right
+  # trim: left # can be left or right
 
 # validation metrics to be calculated and plotted
 metrics:
@@ -37,7 +37,7 @@ levels:
     # - 80
     # - 120
 
-# "truth" data input
+# baseline dataset
 base:
   name: sodar
   # data directory
@@ -47,8 +47,10 @@ base:
   var: wind_speed
   # data frequency in minutes
   freq: 10
+  # flag value
+  flag: 999
 
-# data input to be compared with the "truth" data input
+# data input to be compared with the baseline dataset
 comp:
   - name: wrf
     # data directory
@@ -60,3 +62,5 @@ comp:
       - v
     # data frequency in minutes
     freq: 5
+    # flag value
+    flag: 999
