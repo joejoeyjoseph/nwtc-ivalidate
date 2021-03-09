@@ -19,7 +19,7 @@ class sodar_netcdf:
 
   def get_ts(self,loc,lev):
 
-    df = pd.DataFrame({"t": [], 'ws': []})
+    df = pd.DataFrame({"t": [], 'sodar_ws': []})
 
     for l in os.listdir(self.path):
 
@@ -36,8 +36,12 @@ class sodar_netcdf:
       #print(height_ind)
       ws = ih.variables[self.var][0][height_ind]
 
+      # sodar data were masked at 2016-09-23 16:10 and 16:20
+      if np.ma.is_masked(ws) is True: 
+          ws = np.NaN
+
       ih.close()
-      df = df.append([{"t": t, 'ws': ws}])
+      df = df.append([{"t": t, 'sodar_ws': ws}])
 
       #print('done')
 

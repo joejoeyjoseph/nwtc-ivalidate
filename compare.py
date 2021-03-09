@@ -221,7 +221,11 @@ for lev in conf['levels']['height_agl']:
 
   print(combine_df['sodar_ws'].iloc[24:28])
   print(combine_df['sodar_ws'].iloc[25])
-  print(np.ma.is_masked(combine_df['sodar_ws'].iloc[25])) <--- this
+  print(np.ma.is_masked(combine_df['sodar_ws'].iloc[25]))
+  print(np.ma.clump_unmasked(combine_df['sodar_ws']))
+
+  print(combine_df.iloc[25])
+  print(np.ma.is_masked(combine_df.iloc[25]))
 
   print(combine_df['sodar_ws'].loc[np.ma.is_masked(combine_df['sodar_ws'])])
 
