@@ -4,11 +4,11 @@ location:
   lat: 45.57451
   lon: -120.74734
 
-prepare:
-  # align the length of validation period of two data sets
-  - trim:
-      lower: -1000.0
-      upper: 1000.0
+# prepare:
+#   # align the length of validation period of two data sets
+#   - trim:
+#       lower: -1000.0
+#       upper: 1000.0
   # - linear_interp1:
   #     #n: 23
   #     # resolution of input data
