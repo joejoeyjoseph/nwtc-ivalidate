@@ -157,6 +157,9 @@ for lev in conf['levels']['height_agl']:
 
     compute_df = combine_df.dropna()
 
+    print(len(combine_df))
+    print(len(compute_df))
+
     # for future purposes, in case of reading in mulitple compare data columns
     for pair in itertools.combinations(compute_df.columns, 2): 
 

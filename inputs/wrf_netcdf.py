@@ -15,6 +15,7 @@ from datetime import datetime
 from netCDF4 import Dataset
 import numpy as np
 import pandas as pd
+from qc import check_input_data
 
 class wrf_netcdf:
 
@@ -93,6 +94,8 @@ class wrf_netcdf:
       u = ih.variables[self.var[0]][height_ind][i][j]
       v = ih.variables[self.var[1]][height_ind][i][j]
       ws = np.sqrt(u**2 + v**2)
+
+      ws = check_input_data.convert_mask_to_nan(ws)
 
       ih.close()
       df = df.append([{"t": t, 'wrf_ws': ws}])

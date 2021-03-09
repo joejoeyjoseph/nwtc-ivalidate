@@ -10,6 +10,7 @@ from datetime import datetime
 from netCDF4 import Dataset
 import numpy as np
 import pandas as pd
+from qc import check_input_data
 
 class sodar_netcdf:
 
@@ -36,9 +37,11 @@ class sodar_netcdf:
       #print(height_ind)
       ws = ih.variables[self.var][0][height_ind]
 
-      # sodar data were masked at 2016-09-23 16:10 and 16:20
-      if np.ma.is_masked(ws) is True: 
-          ws = np.NaN
+      # # sodar data were masked at 2016-09-23 16:10 and 16:20
+      # if np.ma.is_masked(ws) is True: 
+      #     ws = np.NaN
+
+      ws = check_input_data.convert_mask_to_nan(ws)
 
       ih.close()
       df = df.append([{"t": t, 'sodar_ws': ws}])
