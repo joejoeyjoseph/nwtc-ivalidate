@@ -14,17 +14,5 @@ import numpy as np
 class mae:
 
   def compute(self,x,y):
-    
-    # just values (second member of tuple)
-    # note: this isn't time aligning at all, just compares the 
-    #       values as they arrive
-    x = x.to_numpy()[:,0]
-    y = y.to_numpy()[:,0]
 
-    # naively truncate longer array if one is shorter
-    if len(x) > len(y):
-      x = x[0:len(y)]
-    if len(y) > len(x):
-      y = y[0:len(x)]
-
-    return float(np.mean(abs(np.array(x) - np.array(y))))
+    return float(np.mean(abs(x - y)))

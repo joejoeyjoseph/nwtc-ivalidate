@@ -26,14 +26,6 @@ class crosscheck_ts:
     # base ts as 1st column
     combine_df = pd.merge(base, comp, left_index=True, right_index=True)
 
-    # for col in combine_df.columns: 
-    #   for ind, row in combine_df.iterrows(): 
-    #     if np.ma.is_masked(combine_df[col].iloc[row]) == True: 
-    #       print(row)
-    #       print(combine_df[col].iloc[row])
-    #       combine_df[col].iloc[row] = np.NaN
-    #       print(combine_df[col].iloc[row])
-
     return combine_df
 
   

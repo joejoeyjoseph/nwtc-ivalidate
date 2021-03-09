@@ -22,6 +22,9 @@ class wrf_netcdf:
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
 
+    print('pathhh')
+    print(self.path)
+
   def get_ij(self,ih,loc):
 
     lat = np.array(ih["XLAT"][0])
@@ -71,7 +74,7 @@ class wrf_netcdf:
 
   def get_var_ts(self,loc,lev):
 
-    df = pd.DataFrame({"t": [], 'ws': []})
+    df = pd.DataFrame({"t": [], 'wrf_ws': []})
 
     for l in os.listdir(self.path):
 
@@ -92,8 +95,11 @@ class wrf_netcdf:
       ws = np.sqrt(u**2 + v**2)
 
       ih.close()
-      df = df.append([{"t": t, 'ws': ws}])
+      df = df.append([{"t": t, 'wrf_ws': ws}])
 
     df = df.set_index("t").sort_index()
+
+    print('get netcdf')
+    print('getttt')
 
     return df

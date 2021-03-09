@@ -140,14 +140,11 @@ for q in conf["prepare"]:
   k,c = q.popitem()
   preproc.append(get_module_class("prepare",k)(c))
 
-print('preproc')
-print(preproc)
-
-# print('validation start time:', conf['time']["window"]["lower"])
-# print('validation end time:', conf['time']["window"]["upper"])
-# print('location:', conf['location'])
-# print('variable:', base['var'])
-# print('truth:', base['name'])
+print('validation start time:', conf['time']["window"]["lower"])
+print('validation end time:', conf['time']["window"]["upper"])
+print('location:', conf['location'])
+print('variable:', base['var'])
+print('truth:', base['name'])
 
 crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
@@ -170,7 +167,7 @@ for lev in conf['levels']['height_agl']:
   # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
   base["data"] = base["input"].get_ts(conf["location"], lev)
 
-  print('base')
+  # print('base')
   #print(type(base))
   #print(base["data"]) 
 
@@ -183,65 +180,36 @@ for lev in conf['levels']['height_agl']:
     # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
     comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev)
 
-    print('comp')
+    # print('comp')
     #print(type(comp[i]))
     #print(comp[i]["data"]) 
 
     results.append({'truth name': base['name'], 'model name': comp[i]['name'], "path": comp[i]["path"], \
                     "location": conf["location"], "var": comp[i]["var"]})
 
-    #w = wrf_netcdf.get_ts(conf["location"])
-    #print(w)
-
-    #param = crosscheck_ts(conf)
-    #print(param)
-    #print(param[''])
-    
-    # conf['time']
-
-    print('crosscheck')
-    print(crosscheck_ts)
-
-    #a = crosscheck_ts.trim_ts()
-
-    # a = crosscheck_ts.trim_ts(base["data"])
-
     combine_df = crosscheck_ts.align_time(base["data"], comp[i]["data"])
 
-    print(combine_df.columns)
+    compute_df = combine_df.dropna()
 
-    for pair in itertools.combinations(combine_df.columns, 2): 
+    # for future purposes, in case of reading in mulitple compare data columns
+    for pair in itertools.combinations(compute_df.columns, 2): 
 
-      print(pair)
+      x = compute_df[pair[0]]
+      y = compute_df[pair[1]]
 
-      x = combine_df[pair[0]]
-      y = combine_df[pair[1]]
+    if len(x) != len(y): 
+      sys.exit('Lengths of baseline and compare datasets are not equal!')
 
-  #print(combine_df.loc[np.ma.is_masked(combine_df['sodar_ws'])])
-
-  print(combine_df['sodar_ws'].iloc[24:28])
-  print(combine_df['sodar_ws'].iloc[25])
-  print(np.ma.is_masked(combine_df['sodar_ws'].iloc[25]))
-  print(np.ma.clump_unmasked(combine_df['sodar_ws']))
-
-  print(combine_df.iloc[25])
-  print(np.ma.is_masked(combine_df.iloc[25]))
-
-  print(combine_df['sodar_ws'].loc[np.ma.is_masked(combine_df['sodar_ws'])])
-
-  #print(combine_df['sodar_ws'].loc[combine_df['t'] == '2016-09-23 16:00:00'])
-
-  pd.set_option("display.max_rows", None, "display.max_columns", None)
-  print(combine_df)
+  # pd.set_option("display.max_rows", None, "display.max_columns", None)
 
   #   print(x)
 
-  #   for m in metrics:
+    for m in metrics:
 
-  #     # x, y = time_align(conf["time"],base["data"],comp[i]["data"])
-  #     # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
+      # x, y = time_align(conf["time"],base["data"],comp[i]["data"])
+      # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
 
-  #     results[i][m.__class__.__name__] = m.compute(x, y)
+      results[i][m.__class__.__name__] = m.compute(x, y)
 
   #   print('model:', comp[i]['name'])
   #   plotting.plot_subset_line(y, comp[i]['name'], lev)
@@ -254,10 +222,10 @@ for lev in conf['levels']['height_agl']:
   # # Output the results
   # #print(json.dumps(results))
 
-  # #print((results[0]['path']))
-  # for key, val in results[0].items():
-  #   if key != 'path': 
-  #     if isinstance(val, float): 
-  #       print(str(key)+': '+str(np.round(val, 3)))
-  #     # else: 
-  #     #   print(str(key)+': '+str(val))
+  #print((results[0]['path']))
+  for key, val in results[0].items():
+    if key != 'path': 
+      if isinstance(val, float): 
+        print(str(key)+': '+str(np.round(val, 3)))
+      # else: 
+      #   print(str(key)+': '+str(val))
