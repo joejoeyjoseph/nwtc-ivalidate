@@ -48,6 +48,10 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
     t_min = df.index.min()
     t_max = df.index.max()
 
+    data_freq = (df.index[1] - t_min).total_seconds() / 60.0
+    if data_freq != freq: 
+        print('DATA FREQUENCY AND USER-INPUT FREQUENCY DO NOT MATCH')
+
     # use data file number in path as a check on df length
     data_len_check = len(os.listdir(path))
 
