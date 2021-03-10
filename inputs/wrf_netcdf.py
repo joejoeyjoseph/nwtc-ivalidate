@@ -103,4 +103,7 @@ class wrf_netcdf:
 
     df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
+    print('wrf len')
+    print(len(df))
+
     return df

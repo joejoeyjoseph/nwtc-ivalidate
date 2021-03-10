@@ -65,6 +65,8 @@ def check_missing_ind_add_nan(df, t_min, t_max, freq):
 
 def verify_data_file_count(df, var, path, freq, updated_len=None): 
 
+    print('vVvV')
+
     t_min = df.index.min()
     t_max = df.index.max()
 
@@ -85,11 +87,7 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
     print('read in '+var+' from '+str(t_min)+' to '+str(t_max)+\
         ' every '+str(freq)+' minutes, total of '+str(data_len_check)+' files')
 
-    if data_len_check == (diff_minute + freq) / freq: 
-
-        pass
-
-    else: 
+    if data_len_check != (diff_minute + freq) / freq: 
 
         print('!!!!!!!!!!')
         print('!!!!!!!!!!')
@@ -98,20 +96,55 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         print('!!!!!!!!!!')
         print('!!!!!!!!!!')
 
-    if data_len_check != (diff_minute + freq) / freq: 
+    # if data_len_check != (diff_minute + freq) / freq: 
+
+        print('wrong')
         
         # have duplicated rows in df
         if data_len_check > (diff_minute + freq) / freq: 
 
             df = check_duplicate_ind_remove(df)
 
+            print('after checking dup')
+            print(len(df))
+                
+            print('verify data again...')
+            # recursion, to verify the data again
+            verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
         # have missing rows in df
         elif data_len_check < (diff_minute + freq) / freq: 
 
             df = check_missing_ind_add_nan(df, t_min, t_max, freq)
-            
-        print('verify data again...')
-        # recursion, to verify the data again
-        verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
+            print('after checking miss')
+            print(len(df))
+                
+            print('verify data again...')
+            # recursion, to verify the data again
+            verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
+            ????
+            #df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
+    else: 
+
+        print('right')
+        print(len(df))
+
+    print('lennn')
+    print(len(df))
+    print('whole fn')
 
     return df
+        
+    
+        # print('sodar df len')
+        # print(len(df))
+        # print('1 time')
+
+        # return df
+
+    # print('lennn')
+    # print(len(df))
+    # return df

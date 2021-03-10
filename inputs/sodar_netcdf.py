@@ -51,6 +51,10 @@ class sodar_netcdf:
 
     df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
+
+    print('sodar len')
+    print(len(df))
+
     # print(df.index.min())
     # print(df.index.max())
     
