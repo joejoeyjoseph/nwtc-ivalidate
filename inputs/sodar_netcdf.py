@@ -20,7 +20,7 @@ class sodar_netcdf:
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
 
-  def get_ts(self,loc,lev, freq, flag):
+  def get_ts(self, loc, lev, freq, flag):
 
     df = pd.DataFrame({"t": [], target_var: []})
 

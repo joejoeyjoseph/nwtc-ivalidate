@@ -2,6 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 
+# pd.set_option("display.max_rows", None, "display.max_columns", None)
+
 def convert_mask_to_nan(var, t): 
 
     if np.ma.is_masked(var) is True: 
@@ -43,6 +45,24 @@ def check_duplicate_ind_remove(df):
 
     return df
 
+def check_missing_ind_add_nan(df, t_min, t_max, freq): 
+
+    ideal = pd.date_range(start=t_min, end=t_max, freq=str(freq)+'min')
+    with_data = ideal.isin(df.index)
+
+    print('DETECT '+str(len(ideal[~with_data]))+' ROWS IN DATAFRAME ARE MISSING')
+    print('THEY ARE:')
+    print(ideal[~with_data].strftime("%Y-%m-%d %H:%M:%S").values)
+
+    ideal_df = pd.DataFrame(data=np.NaN, columns=df.columns+'_i', index=ideal)
+    ideal_df.index.name = df.index.name
+
+    new_df = pd.concat([ideal_df, df], axis=1)
+
+    df = new_df[df.columns]
+
+    return df
+
 def verify_data_file_count(df, var, path, freq, updated_len=None): 
 
     t_min = df.index.min()
@@ -50,7 +70,8 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     data_freq = (df.index[1] - t_min).total_seconds() / 60.0
     if data_freq != freq: 
-        print('DATA FREQUENCY AND USER-INPUT FREQUENCY DO NOT MATCH')
+        print('DATA FREQUENCY OF FIRST TWO DATA POINTS '+\
+            'AND USER-INPUT FREQUENCY DO NOT MATCH')
 
     # use data file number in path as a check on df length
     data_len_check = len(os.listdir(path))
@@ -77,8 +98,18 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         print('!!!!!!!!!!')
         print('!!!!!!!!!!')
 
-        df = check_duplicate_ind_remove(df)
+    if data_len_check != (diff_minute + freq) / freq: 
+        
+        # have duplicated rows in df
+        if data_len_check > (diff_minute + freq) / freq: 
 
+            df = check_duplicate_ind_remove(df)
+
+        # have missing rows in df
+        elif data_len_check < (diff_minute + freq) / freq: 
+
+            df = check_missing_ind_add_nan(df, t_min, t_max, freq)
+            
         print('verify data again...')
         # recursion, to verify the data again
         verify_data_file_count(df, var, path, freq, updated_len=len(df))

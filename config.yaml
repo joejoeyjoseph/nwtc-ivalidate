@@ -42,9 +42,10 @@ base:
   name: sodar
   # data directory
   # path: data/mw_data_sodar
-  path: data/mw_data_sodar_dup
-  # add sodar.z06.b0.20160924.170001.txt.a2e.nc
-  # sodar.z06.b0.20160924.170000.txt2.a2e.nc
+  # path: data/mw_data_sodar_dup
+  # add sodar.z06.b0.20160924.170000.txt2.a2e.nc, sodar.z06.b0.20160924.171001.txt2.a2e.nc
+  path: data/mw_data_sodar_gap
+  # delete sodar.z06.b0.20160924.170000.txt.a2e.nc
   format: sodar_netcdf
   # variables to validate
   var: wind_speed
