@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 class crosscheck_ts: 
-
+  
   def __init__(self, conf):
 
     self.upper = conf['time']["window"]["upper"]
@@ -26,45 +26,18 @@ class crosscheck_ts:
     # base ts as 1st column
     combine_df = pd.merge(base, comp, left_index=True, right_index=True)
 
+    t_min = combine_df.index.min()
+    t_max = combine_df.index.max()
+
+    freq = (combine_df.index[1] - t_min).total_seconds() / 60.0
+    diff_minute = (t_max - t_min).total_seconds() / 60.0
+
+    print('evaluate from '+str(t_min)+' to '+str(t_max)+\
+      ' every '+str(freq)+' minutes, total of '+str(len(combine_df))+' time steps')
+
+    if len(combine_df) == (diff_minute + freq) / freq: 
+      pass
+    else: 
+      print('COMBINE_DF FREQUENCY IS WRONG')
+
     return combine_df
-
-  
-
-  # def trim_ts: 
-
-  # def time_align2(conf,x,y):
-
-  #   print('iggg')
-
-  #   # apply time window
-  #   if "window" in list(conf.keys()):
-
-  #       if conf["window"]["lower"].__class__.__name__ != 'datetime':
-  #       lower = dateutil.parser.parse(conf["window"]["lower"])
-  #       else:
-  #       lower = conf["window"]["lower"]
-  #       if conf["window"]["upper"].__class__.__name__ != 'datetime':
-  #       upper = dateutil.parser.parse(conf["window"]["upper"])
-  #       else:
-  #       upper = conf["window"]["upper"]
-
-  #       x = x[x.index <= upper]
-  #       x = x[x.index >= lower]
-  #       y = y[y.index <= upper]
-  #       y = y[y.index >= lower]
-
-  #   # trim to extent of base or comp
-  #   if "trim" in list(conf.keys()):
-
-  #       if conf["trim"] == "base":
-  #       lower = x.index.min()
-  #       upper = x.index.max()
-  #       y = y[y.index <= upper]
-  #       y = y[y.index >= lower]
-  #       elif conf["trim"] == "comp":
-  #       lower = y.index.min()
-  #       upper = y.index.max()
-  #       x = x[x.index <= upper]
-  #       x = x[x.index >= lower]
-        
-  #   return (x,y)

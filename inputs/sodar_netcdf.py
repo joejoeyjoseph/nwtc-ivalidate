@@ -20,7 +20,7 @@ class sodar_netcdf:
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
 
-  def get_ts(self,loc,lev, freq):
+  def get_ts(self,loc,lev, freq, flag):
 
     df = pd.DataFrame({"t": [], target_var: []})
 
@@ -39,7 +39,8 @@ class sodar_netcdf:
       #print(height_ind)
       ws = ih.variables[self.var][0][height_ind]
 
-      ws = check_input_data.convert_mask_to_nan(ws)
+      ws = check_input_data.convert_mask_to_nan(ws, t)
+      ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
       ih.close()
       df = df.append([{"t": t, target_var: ws}])

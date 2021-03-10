@@ -73,7 +73,7 @@ class wrf_netcdf:
 
     return (i,j)
 
-  def get_var_ts(self,loc,lev, freq):
+  def get_var_ts(self,loc,lev, freq, flag):
 
     df = pd.DataFrame({"t": [], target_var: []})
 
@@ -93,7 +93,8 @@ class wrf_netcdf:
       v = ih.variables[self.var[1]][height_ind][i][j]
       ws = np.sqrt(u**2 + v**2)
 
-      ws = check_input_data.convert_mask_to_nan(ws)
+      ws = check_input_data.convert_mask_to_nan(ws, t)
+      ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
       ih.close()
       df = df.append([{"t": t, target_var: ws}])
