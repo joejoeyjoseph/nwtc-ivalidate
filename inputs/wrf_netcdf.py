@@ -101,6 +101,6 @@ class wrf_netcdf:
 
     df = df.set_index("t").sort_index()
 
-    check_input_data.verify_data_file_count(df, target_var, self.path, freq)
+    df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
     return df

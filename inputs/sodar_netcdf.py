@@ -49,7 +49,7 @@ class sodar_netcdf:
 
     df = df.set_index("t").sort_index()
 
-    check_input_data.verify_data_file_count(df, target_var, self.path, freq)
+    df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
     # print(df.index.min())
     # print(df.index.max())
