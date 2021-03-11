@@ -110,7 +110,9 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
                 
             print('verify data again...')
             # recursion, to verify the data again
-            verify_data_file_count(df, var, path, freq, updated_len=len(df))
+            df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
+            return df
 
         # have missing rows in df
         elif data_len_check < (diff_minute + freq) / freq: 
@@ -122,21 +124,23 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
                 
             print('verify data again...')
             # recursion, to verify the data again
-            verify_data_file_count(df, var, path, freq, updated_len=len(df))
+            # verify_data_file_count(df, var, path, freq, updated_len=len(df))
 
-            ????
-            #df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
+            
+            df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
+
+            return df
 
     else: 
 
         print('right')
         print(len(df))
 
-    print('lennn')
-    print(len(df))
-    print('whole fn')
+    # print('lennn')
+    # print(len(df))
+    # print('whole fn')
 
-    return df
+        return df
         
     
         # print('sodar df len')
