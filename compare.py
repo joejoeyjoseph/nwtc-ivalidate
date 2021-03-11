@@ -110,8 +110,8 @@ metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
 print('location:', conf['location'])
-print('variable:', base['var'])
-print('truth:', base['name'])
+print('baseline dataset:', base['name'])
+print('variable:', base['target_var'])
 
 crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
@@ -119,92 +119,75 @@ plotting = get_module_class('plotting', 'plot_ts')
 
 for lev in conf['levels']['height_agl']: 
 
-  print('')
-  print('#########################################################################')
-  print('')
+    print('')
+    print('#########################################################################')
+    print('')
 
-  print('height a.g.l.:', str(lev))
+    print('height a.g.l.:', str(lev))
 
-  # Load the data and compute the metrics
-  results = []
+    # Load the data and compute the metrics
+    results = []
 
-  # base["path"] = get_file(base["path"],conf["remote"])
-  base["path"] = get_file(base["path"], None) # local files
+    base["path"] = get_file(base["path"], None) # local files
 
-  # run __init__
-  base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"], base['target_var'])
-  # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
-  base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
-
-  # base['freq']
-
-  # print('base')
-  #print(type(base))
-  #print(base["data"]) 
-
-  for i in range(0,len(comp)):
-
-    #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
-    comp[i]["path"] = get_file(comp[i]["path"], None) # local files
     # run __init__
-    comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"],comp[i]['target_var'])
+    base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"], base['target_var'])
 
-    # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
-    comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev, comp[i]['freq'], comp[i]['flag'])
+    base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
 
-    # print('comp')
-    #print(type(comp[i]))
-    #print(comp[i]["data"]) 
+    for c in comp:
 
-    results.append({'truth name': base['name'], 'model name': comp[i]['name'], "path": comp[i]["path"], \
-                    "location": conf["location"], "var": comp[i]["var"]})
+        #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
+        c["path"] = get_file(c["path"], None) # local files
+        # run __init__
+        c["input"] = get_module_class("inputs",c["format"])(c["path"],c["var"],c['target_var'])
 
-    combine_df = crosscheck_ts.align_time(base["data"], comp[i]["data"])
+        # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
+        c["data"] = c["input"].get_var_ts(conf["location"], lev, c['freq'], c['flag'])
 
-    compute_df = combine_df.dropna()
+        results.append({'truth name': base['name'], 'model name': c['name'], "path": c["path"], \
+                        "location": conf["location"], "var": c["var"]})
 
-    only_na = combine_df[~combine_df.index.isin(compute_df.index)]
-    print('for calculating metrics, removing the following time steps that contain NaN values:')
-    print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
+        combine_df = crosscheck_ts.align_time(base["data"], c["data"])
 
-    print(len(combine_df))
-    print(len(compute_df))
+        compute_df = combine_df.dropna()
 
-    # for future purposes, in case of reading in mulitple compare data columns
-    for pair in itertools.combinations(compute_df.columns, 2): 
+        only_na = combine_df[~combine_df.index.isin(compute_df.index)]
+        print('for calculating metrics, removing the following time steps that contain NaN values:')
+        print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
 
-      x = compute_df[pair[0]]
-      y = compute_df[pair[1]]
+        print(len(combine_df))
+        print(len(compute_df))
 
-    if len(x) != len(y): 
-      sys.exit('Lengths of baseline and compare datasets are not equal!')
+        # for future purposes, in case of reading in mulitple compare data columns
+        for pair in itertools.combinations(compute_df.columns, 2): 
 
-  # pd.set_option("display.max_rows", None, "display.max_columns", None)
+            x = compute_df[pair[0]]
+            y = compute_df[pair[1]]
 
-  #   print(x)
+        if len(x) != len(y): 
 
-    for m in metrics:
+            sys.exit('Lengths of baseline and compare datasets are not equal!')
 
-      # x, y = time_align(conf["time"],base["data"],comp[i]["data"])
-      # x, y = check_data.time_align2(conf["time"],base["data"],comp[i]["data"])
+        for m in metrics: 
 
-      results[i][m.__class__.__name__] = m.compute(x, y)
+            results[i][m.__class__.__name__] = m.compute(x, y)
 
-  #   print('model:', comp[i]['name'])
-  #   plotting.plot_subset_line(y, comp[i]['name'], lev)
+        #   print('model:', comp[i]['name'])
+        #   plotting.plot_subset_line(y, comp[i]['name'], lev)
 
-  # print('truth:')
-  # plotting.plot_subset_line(x, base['name'], lev)
+        # print('truth:')
+        # plotting.plot_subset_line(x, base['name'], lev)
 
-  # # FIXME: allow different output formats besides JSON
+        # # FIXME: allow different output formats besides JSON
 
-  # # Output the results
-  # #print(json.dumps(results))
+        # # Output the results
+        # #print(json.dumps(results))
 
-  #print((results[0]['path']))
-  for key, val in results[0].items():
-    if key != 'path': 
-      if isinstance(val, float): 
-        print(str(key)+': '+str(np.round(val, 3)))
-      # else: 
-      #   print(str(key)+': '+str(val))
+    #print((results[0]['path']))
+    for key, val in results[0].items():
+        if key != 'path': 
+            if isinstance(val, float): 
+                print(str(key)+': '+str(np.round(val, 3)))
+            # else: 
+            #   print(str(key)+': '+str(val))
