@@ -134,8 +134,6 @@ for lev in conf['levels']['height_agl']:
   # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
   base["data"] = base["input"].get_ts(conf["location"], lev, base['freq'], base['flag'])
 
-  check_input_data.test()
-
   # base['freq']
 
   # print('base')

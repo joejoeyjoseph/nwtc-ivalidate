@@ -24,10 +24,6 @@ def convert_flag_to_nan(var, flag, t):
 
     return var
 
-def test():
-
-    print('checkkk')
-
 def check_duplicate_ind_remove(df): 
 
     if df.index.has_duplicates: 
@@ -65,8 +61,6 @@ def check_missing_ind_add_nan(df, t_min, t_max, freq):
 
 def verify_data_file_count(df, var, path, freq, updated_len=None): 
 
-    print('vVvV')
-
     t_min = df.index.min()
     t_max = df.index.max()
 
@@ -97,17 +91,12 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         print('!!!!!!!!!!')
 
     # if data_len_check != (diff_minute + freq) / freq: 
-
-        print('wrong')
         
         # have duplicated rows in df
         if data_len_check > (diff_minute + freq) / freq: 
 
             df = check_duplicate_ind_remove(df)
 
-            print('after checking dup')
-            print(len(df))
-                
             print('verify data again...')
             # recursion, to verify the data again
             df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
@@ -118,37 +107,15 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         elif data_len_check < (diff_minute + freq) / freq: 
 
             df = check_missing_ind_add_nan(df, t_min, t_max, freq)
-
-            print('after checking miss')
-            print(len(df))
                 
             print('verify data again...')
-            # recursion, to verify the data again
-            # verify_data_file_count(df, var, path, freq, updated_len=len(df))
-
-            
+            # recursion, to verify the data again           
             df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
 
             return df
 
     else: 
 
-        print('right')
-        print(len(df))
-
-    # print('lennn')
-    # print(len(df))
-    # print('whole fn')
+        print('--- '+var+' dataframe should be error free ---')
 
         return df
-        
-    
-        # print('sodar df len')
-        # print(len(df))
-        # print('1 time')
-
-        # return df
-
-    # print('lennn')
-    # print(len(df))
-    # return df

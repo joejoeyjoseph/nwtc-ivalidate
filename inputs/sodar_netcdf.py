@@ -51,21 +51,4 @@ class sodar_netcdf:
 
     df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
 
-
-    print('sodar len')
-    print(len(df))
-
-    # print(df.index.min())
-    # print(df.index.max())
-    
-    # diff_sec = (df.index.max() - df.index.min()).total_seconds() / 60.0
-
-    # print('read in '+target_var+' from '+str(df.index.min())+' to '+str(df.index.max()))
-
-    # if len(os.listdir(self.path)) == (diff_sec + freq) / freq: 
-    #   print('good')
-
-
-    # print(freq)
-
     return df
