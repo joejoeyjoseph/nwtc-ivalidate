@@ -132,7 +132,7 @@ for lev in conf['levels']['height_agl']:
   base["path"] = get_file(base["path"], None) # local files
   base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"])
   # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
-  base["data"] = base["input"].get_ts(conf["location"], lev, base['freq'], base['flag'])
+  base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
 
   # base['freq']
 
