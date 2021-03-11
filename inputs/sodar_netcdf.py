@@ -12,17 +12,16 @@ import numpy as np
 import pandas as pd
 from qc import check_input_data
 
-target_var = 'sodar_ws'
-
 class sodar_netcdf:
 
-  def __init__(self,path,var):
+  def __init__(self,path,var, target_var):
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
+    self.target_var = target_var
 
   def get_ts(self, lev, freq, flag):
 
-    df = pd.DataFrame({"t": [], target_var: []})
+    df = pd.DataFrame({"t": [], self.target_var: []})
 
     for l in os.listdir(self.path):
 
@@ -43,12 +42,12 @@ class sodar_netcdf:
       ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
       ih.close()
-      df = df.append([{"t": t, target_var: ws}])
+      df = df.append([{"t": t, self.target_var: ws}])
 
       #print('done')
 
     df = df.set_index("t").sort_index()
 
-    df = check_input_data.verify_data_file_count(df, target_var, self.path, freq)
+    df = check_input_data.verify_data_file_count(df, self.target_var, self.path, freq)
 
     return df

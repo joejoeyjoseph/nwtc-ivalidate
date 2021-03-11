@@ -116,6 +116,6 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     else: 
 
-        print('--- '+var+' dataframe should be error free ---')
+        print('--- '+var+' dataframe should have unique and continuous data ---')
 
         return df

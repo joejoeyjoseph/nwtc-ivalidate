@@ -32,7 +32,8 @@ class crosscheck_ts:
     freq = (combine_df.index[1] - t_min).total_seconds() / 60.0
     diff_minute = (t_max - t_min).total_seconds() / 60.0
 
-    print('evaluate from '+str(t_min)+' to '+str(t_max)+\
+    print('evaluate '+', '.join(combine_df.columns.values)+\
+      ' from '+str(t_min)+' to '+str(t_max)+\
       ' every '+str(freq)+' minutes, total of '+str(len(combine_df))+' time steps')
 
     data_len = (diff_minute + freq) / freq
@@ -46,11 +47,11 @@ class crosscheck_ts:
       print('DESIRED: FROM '+str(self.lower)+' TO '+str(self.upper))
       print('DATA: FROM '+str(t_min)+' TO '+str(t_max))
 
-    if data_len != desired_len: 
+    # if data_len != desired_len: 
 
-      print('WARNING: DESIERED EVALUATION DATA LENGTH DOES NOT MATCH DATA LENGTH')
-      print('DESIRED LENGTH: '+str(desired_len))
-      print('DATA LENGTH: '+str(data_len))
+    #   print('WARNING: DESIERED EVALUATION DATA LENGTH DOES NOT MATCH DATA LENGTH')
+    #   print('DESIRED LENGTH: '+str(desired_len))
+    #   print('DATA LENGTH: '+str(data_len))
 
     if len(combine_df) == desired_len: 
     

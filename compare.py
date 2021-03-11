@@ -130,7 +130,9 @@ for lev in conf['levels']['height_agl']:
 
   # base["path"] = get_file(base["path"],conf["remote"])
   base["path"] = get_file(base["path"], None) # local files
-  base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"])
+
+  # run __init__
+  base["input"] = get_module_class("inputs",base["format"])(base["path"],base["var"], base['target_var'])
   # base["data"] = apply_trans(base["input"].get_ts(conf["location"], lev), preproc)
   base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
 
@@ -144,7 +146,8 @@ for lev in conf['levels']['height_agl']:
 
     #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
     comp[i]["path"] = get_file(comp[i]["path"], None) # local files
-    comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"])
+    # run __init__
+    comp[i]["input"] = get_module_class("inputs",comp[i]["format"])(comp[i]["path"],comp[i]["var"],comp[i]['target_var'])
 
     # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
     comp[i]["data"] = comp[i]["input"].get_var_ts(conf["location"], lev, comp[i]['freq'], comp[i]['flag'])

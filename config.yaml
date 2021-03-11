@@ -1,18 +1,9 @@
 # validation location
 location: 
   # latitude and longitude in degrees
+  # should be the same location as baseline dataset
   lat: 45.57451
   lon: -120.74734
-
-# prepare:
-#   # align the length of validation period of two data sets
-#   - trim:
-#       lower: -1000.0
-#       upper: 1000.0
-  # - linear_interp1:
-  #     #n: 23
-  #     # resolution of input data
-  #     period: 300 # every 300 second, according to WRF output's 5-minute resolution
 
 time:
   window:
@@ -51,11 +42,16 @@ base:
   # path: data/test_sodar_gap
   
   # duplicate & missing data
-  path: data/test_sodar_dupgap 
+  # path: data/test_sodar_dupgap 
+
+  # duplicate & missing data, miss first 12 hours
+  path: data/test_sodar_shortdupgap 
   
   format: sodar_netcdf
   # variables to validate
   var: wind_speed
+  # target variable name to output
+  target_var: sodar_ws
   # data frequency in minutes
   freq: 10
   # flag value
@@ -71,6 +67,8 @@ comp:
     var: 
       - u
       - v
+    # target variable name to output
+    target_var: wrf_ws
     # data frequency in minutes
     freq: 5
     # flag value
