@@ -66,8 +66,12 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     data_freq = (df.index[1] - t_min).total_seconds() / 60.0
     if data_freq != freq: 
-        print('DATA FREQUENCY OF FIRST TWO DATA POINTS '+\
+        print('!!!!!!!!!!')
+        print('!!!!!!!!!!')
+        print('WARNING: DATA FREQUENCY OF FIRST TWO DATA POINTS '+\
             'AND USER-INPUT FREQUENCY DO NOT MATCH')
+        print('!!!!!!!!!!')
+        print('!!!!!!!!!!')
 
     # use data file number in path as a check on df length
     data_len_check = len(os.listdir(path))
@@ -81,19 +85,24 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
     print('read in '+var+' from '+str(t_min)+' to '+str(t_max)+\
         ' every '+str(freq)+' minutes, total of '+str(data_len_check)+' files')
 
-    if data_len_check != (diff_minute + freq) / freq: 
+    desired_len = (diff_minute + freq) / freq
+
+    if data_len_check != desired_len: 
 
         print('!!!!!!!!!!')
         print('!!!!!!!!!!')
         print('WARNING: '+var+' DATA FILE NUMBER ('+str(data_len_check)+\
-            ') DOES NOT MATCH DEFINED DATA FREQUENCY ('+str(freq)+')')
+            ') DOES NOT MATCH DESIRED DATA LENGTH ('+str(desired_len)+\
+            '), WHICH IS DEFINED BY DATA START TIME ('+str(t_min)+\
+            '), DATA END TIME ('+str(t_max)+\
+            '), AND USER-INPUT DATA FREQUENCY ('+str(freq)+')')
         print('!!!!!!!!!!')
         print('!!!!!!!!!!')
 
     # if data_len_check != (diff_minute + freq) / freq: 
         
         # have duplicated rows in df
-        if data_len_check > (diff_minute + freq) / freq: 
+        if data_len_check > desired_len: 
 
             df = check_duplicate_ind_remove(df)
 
@@ -104,7 +113,7 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
             return df
 
         # have missing rows in df
-        elif data_len_check < (diff_minute + freq) / freq: 
+        elif data_len_check < desired_len: 
 
             df = check_missing_ind_add_nan(df, t_min, t_max, freq)
                 

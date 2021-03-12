@@ -50,7 +50,7 @@ base:
   format: sodar_netcdf
   # variables to validate
   var: wind_speed
-  # target variable name to output
+  # target variable name to display
   target_var: sodar_ws
   # data frequency in minutes
   freq: 10
@@ -67,7 +67,7 @@ comp:
     var: 
       - u
       - v
-    # target variable name to output
+    # target variable name to display
     target_var: wrf_ws
     # data frequency in minutes
     freq: 5

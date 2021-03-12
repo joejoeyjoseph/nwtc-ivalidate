@@ -135,7 +135,7 @@ for lev in conf['levels']['height_agl']:
 
     base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
 
-    for c in comp:
+    for ind, c in enumerate(comp):
 
         #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
         c["path"] = get_file(c["path"], None) # local files
@@ -156,9 +156,6 @@ for lev in conf['levels']['height_agl']:
         print('for calculating metrics, removing the following time steps that contain NaN values:')
         print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
 
-        print(len(combine_df))
-        print(len(compute_df))
-
         # for future purposes, in case of reading in mulitple compare data columns
         for pair in itertools.combinations(compute_df.columns, 2): 
 
@@ -171,7 +168,7 @@ for lev in conf['levels']['height_agl']:
 
         for m in metrics: 
 
-            results[i][m.__class__.__name__] = m.compute(x, y)
+            results[ind][m.__class__.__name__] = m.compute(x, y)
 
         #   print('model:', comp[i]['name'])
         #   plotting.plot_subset_line(y, comp[i]['name'], lev)
