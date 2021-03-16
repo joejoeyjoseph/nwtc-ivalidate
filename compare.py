@@ -49,12 +49,8 @@ def get_module_class(t,s):
 # Apply a series of transformative modules
 def apply_trans(ts,modlist):
 
-  # print('modlist')
-  # print(modlist)
-
   for m in modlist:
     ts = m.apply(ts)
-    #print(ts)
 
   return ts
 
@@ -102,12 +98,6 @@ def get_file(path,remote):
 # Pre-load all the metric modules into an array
 metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
 
-# Pre-load all the qa/qc modules into an array
-# preproc = []
-# for q in conf["prepare"]:
-#   k,c = q.popitem()
-#   preproc.append(get_module_class("prepare",k)(c))
-
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
 print('location:', conf['location'])
@@ -138,12 +128,10 @@ for lev in conf['levels']['height_agl']:
 
     for ind, c in enumerate(comp):
 
-        #comp[i]["path"] = get_file(comp[i]["path"],conf["remote"])
         c["path"] = get_file(c["path"], None) # local files
         # run __init__
         c["input"] = get_module_class("inputs",c["format"])(c["path"],c["var"],c['target_var'])
 
-        # comp[i]["data"] = apply_trans(comp[i]["input"].get_var_ts(conf["location"], lev),preproc)
         c["data"] = c["input"].get_var_ts(conf["location"], lev, c['freq'], c['flag'])
 
         results.append({'truth name': base['name'], 'model name': c['name'], "path": c["path"], \
@@ -154,7 +142,7 @@ for lev in conf['levels']['height_agl']:
         compute_df = combine_df.dropna()
 
         only_na = combine_df[~combine_df.index.isin(compute_df.index)]
-        print('for calculating metrics, removing the following time steps that contain NaN values:')
+        print('to calculate metrics, removing the following time steps that contain NaN values:')
         print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
 
         # for future purposes, in case of reading in mulitple compare data columns
@@ -171,22 +159,10 @@ for lev in conf['levels']['height_agl']:
 
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
-        print('model:', c['name'])
         plotting.plot_pair_lines(combine_df, lev)
         plotting.plot_pair_scatter(combine_df, lev)
 
-        # print('truth:')
-        # plotting.plot_subset_line(x, base['name'], lev)
-
-        # # FIXME: allow different output formats besides JSON
-
-        # # Output the results
-        # #print(json.dumps(results))
-
-    #print((results[0]['path']))
     for key, val in results[0].items():
         if key != 'path': 
             if isinstance(val, float): 
                 print(str(key)+': '+str(np.round(val, 3)))
-            # else: 
-            #   print(str(key)+': '+str(val))

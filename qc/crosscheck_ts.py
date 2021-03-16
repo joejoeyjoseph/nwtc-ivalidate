@@ -33,8 +33,8 @@ class crosscheck_ts:
     diff_minute = (t_max - t_min).total_seconds() / 60.0
 
     print('evaluate '+', '.join(combine_df.columns.values)+\
-        ' from '+str(t_min)+' to '+str(t_max)+\
-        ' every '+str(freq)+' minutes, total of '+str(len(combine_df))+' time steps')
+        ' from '+str(t_min)+' to '+str(t_max))
+    print('every '+str(freq)+' minutes, total of '+str(len(combine_df))+' time steps')
 
     data_len = (diff_minute + freq) / freq
 

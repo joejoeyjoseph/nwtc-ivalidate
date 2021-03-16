@@ -82,8 +82,8 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     diff_minute = (t_max - t_min).total_seconds() / 60.0
 
-    print('read in '+var+' from '+str(t_min)+' to '+str(t_max)+\
-        ' every '+str(freq)+' minutes, total of '+str(data_len_check)+' files')
+    print('read in '+var+' from '+str(t_min)+' to '+str(t_max))
+    print('every '+str(freq)+' minutes, total of '+str(data_len_check)+' files')
 
     desired_len = (diff_minute + freq) / freq
 
