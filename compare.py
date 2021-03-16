@@ -100,7 +100,7 @@ print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
 print('location:', conf['location'])
 print('baseline dataset:', base['name'])
-print('variable:', base['target_var'])
+print('variable:', conf['plot']['var'])
 
 crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
@@ -108,14 +108,16 @@ plotting = get_module_class('plotting', 'plot_data')(conf)
 
 for lev in conf['levels']['height_agl']: 
 
-    print('')
+    print()
     print('######################### height a.g.l.: '+str(lev)+\
         ' '+conf['levels']['height_units']+' #########################')
-    print('')
+    print()
 
 
     # Load the data and compute the metrics
     results = []
+
+    print('********** for '+base['name']+': **********')
 
     base["path"] = get_file(base["path"], None) # local files
 
@@ -125,6 +127,9 @@ for lev in conf['levels']['height_agl']:
     base["data"] = base["input"].get_ts(lev, base['freq'], base['flag'])
 
     for ind, c in enumerate(comp):
+
+        print()
+        print('********** for '+c['name']+': **********')
 
         c["path"] = get_file(c["path"], None) # local files
         # run __init__
@@ -140,6 +145,7 @@ for lev in conf['levels']['height_agl']:
         compute_df = combine_df.dropna()
 
         only_na = combine_df[~combine_df.index.isin(compute_df.index)]
+        print()
         print('to calculate metrics, removing the following time steps that contain NaN values:')
         print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
 

@@ -4,15 +4,21 @@ import pandas as pd
 
 # pd.set_option("display.max_rows", None, "display.max_columns", None)
 
-def convert_mask_to_nan(var, t): 
+def convert_mask_to_nan(var, t, mask_i): 
 
     if np.ma.is_masked(var) is True: 
 
         var = np.NaN
 
+        if mask_i == 0: 
+
+            print()
+
+        mask_i += 1
+
         print('detect masked value at '+str(t)+', convert to NaN')
 
-    return var
+    return var, mask_i
 
 def convert_flag_to_nan(var, flag, t): 
 
@@ -66,11 +72,10 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     data_freq = (df.index[1] - t_min).total_seconds() / 60.0
     if data_freq != freq: 
-        print('!!!!!!!!!!')
+        print()
         print('!!!!!!!!!!')
         print('WARNING: DATA FREQUENCY OF FIRST TWO DATA POINTS '+\
             'AND USER-INPUT FREQUENCY DO NOT MATCH')
-        print('!!!!!!!!!!')
         print('!!!!!!!!!!')
 
     # use data file number in path as a check on df length
@@ -82,6 +87,7 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     diff_minute = (t_max - t_min).total_seconds() / 60.0
 
+    print()
     print('read in '+var+' from '+str(t_min)+' to '+str(t_max))
     print('every '+str(freq)+' minutes, total of '+str(data_len_check)+' files')
 
@@ -89,14 +95,13 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     if data_len_check != desired_len: 
 
-        print('!!!!!!!!!!')
+        print()
         print('!!!!!!!!!!')
         print('WARNING: '+var+' DATA FILE NUMBER ('+str(data_len_check)+\
             ') DOES NOT MATCH DESIRED DATA LENGTH ('+str(desired_len)+\
             '), WHICH IS DEFINED BY DATA START TIME ('+str(t_min)+\
             '), DATA END TIME ('+str(t_max)+\
             '), AND USER-INPUT DATA FREQUENCY ('+str(freq)+')')
-        print('!!!!!!!!!!')
         print('!!!!!!!!!!')
 
     # if data_len_check != (diff_minute + freq) / freq: 
@@ -106,6 +111,7 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
             df = check_duplicate_ind_remove(df)
 
+            print()
             print('verify data again...')
             # recursion, to verify the data again
             df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
@@ -116,7 +122,8 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         elif data_len_check < desired_len: 
 
             df = check_missing_ind_add_nan(df, t_min, t_max, freq)
-                
+            
+            print()
             print('verify data again...')
             # recursion, to verify the data again           
             df = verify_data_file_count(df, var, path, freq, updated_len=len(df))
@@ -125,6 +132,7 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
     else: 
 
+        print()
         print('--- '+var+' dataframe should have unique and continuous data ---')
 
         return df

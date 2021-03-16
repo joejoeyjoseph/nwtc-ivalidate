@@ -23,6 +23,8 @@ class sodar_netcdf:
 
     df = pd.DataFrame({"t": [], self.target_var: []})
 
+    mask_i = 0
+
     for l in os.listdir(self.path):
 
       #print(l)
@@ -38,7 +40,7 @@ class sodar_netcdf:
       #print(height_ind)
       ws = ih.variables[self.var][0][height_ind]
 
-      ws = check_input_data.convert_mask_to_nan(ws, t)
+      ws, mask_i = check_input_data.convert_mask_to_nan(ws, t, mask_i)
       ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
       ih.close()

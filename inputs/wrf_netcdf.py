@@ -76,6 +76,8 @@ class wrf_netcdf:
 
     df = pd.DataFrame({"t": [], self.target_var: []})
 
+    mask_i = 0
+
     for l in os.listdir(self.path):
 
       ih = Dataset(self.path + "/" + l, 'r')
@@ -92,7 +94,7 @@ class wrf_netcdf:
       v = ih.variables[self.var[1]][height_ind][i][j]
       ws = np.sqrt(u**2 + v**2)
 
-      ws = check_input_data.convert_mask_to_nan(ws, t)
+      ws, mask_i = check_input_data.convert_mask_to_nan(ws, t, mask_i)
       ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
       ih.close()
