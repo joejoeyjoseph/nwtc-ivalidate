@@ -116,15 +116,15 @@ print('variable:', base['target_var'])
 
 crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
-plotting = get_module_class('plotting', 'plot_ts')(conf)
+plotting = get_module_class('plotting', 'plot_data')(conf)
 
 for lev in conf['levels']['height_agl']: 
 
     print('')
-    print('#########################################################################')
+    print('######################### height a.g.l.: '+str(lev)+\
+        ' '+conf['levels']['height_units']+' #########################')
     print('')
 
-    print('height a.g.l.:', str(lev))
 
     # Load the data and compute the metrics
     results = []
@@ -172,7 +172,8 @@ for lev in conf['levels']['height_agl']:
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
         print('model:', c['name'])
-        plotting.plot_pair_lines2(combine_df, lev)
+        plotting.plot_pair_lines(combine_df, lev)
+        plotting.plot_pair_scatter(combine_df, lev)
 
         # print('truth:')
         # plotting.plot_subset_line(x, base['name'], lev)
