@@ -14,7 +14,7 @@ from qc import check_input_data
 
 class sodar_netcdf:
 
-  def __init__(self,path,var, target_var):
+  def __init__(self, path, var, target_var):
     self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
     self.var = var
     self.target_var = target_var

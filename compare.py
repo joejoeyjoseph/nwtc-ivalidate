@@ -18,7 +18,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 import itertools
-from qc import check_input_data
+# from qc import check_input_data
 
 config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
 # config_file = str(pathlib.Path(os.getcwd()).parent) + '/config_test.yaml'
@@ -116,7 +116,7 @@ print('variable:', base['target_var'])
 
 crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
-plotting = get_module_class('plotting', 'plot_ts')
+plotting = get_module_class('plotting', 'plot_ts')(conf)
 
 for lev in conf['levels']['height_agl']: 
 
@@ -171,8 +171,8 @@ for lev in conf['levels']['height_agl']:
 
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
-        #   print('model:', comp[i]['name'])
-        #   plotting.plot_subset_line(y, comp[i]['name'], lev)
+        print('model:', c['name'])
+        plotting.plot_pair_lines2(combine_df, lev)
 
         # print('truth:')
         # plotting.plot_subset_line(x, base['name'], lev)

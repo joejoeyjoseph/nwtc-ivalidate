@@ -11,7 +11,6 @@ time:
     lower: 2016-09-23 12:00:00
     # validation period end time
     upper: 2016-09-25 12:00:00
-  # trim: left # can be left or right
 
 # validation metrics to be calculated and plotted
 metrics:
@@ -61,3 +60,8 @@ comp:
     freq: 5
     # flag value
     flag: 999
+
+# plotting 
+plot: 
+  var: wind speed
+  units: ms-1
