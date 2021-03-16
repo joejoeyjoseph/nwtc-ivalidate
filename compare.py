@@ -152,6 +152,7 @@ for lev in conf['levels']['height_agl']:
         # for future purposes, in case of reading in mulitple compare data columns
         for pair in itertools.combinations(compute_df.columns, 2): 
 
+            # baseline should be the 1st (Python's 0th) column
             x = compute_df[pair[0]]
             y = compute_df[pair[1]]
 
@@ -163,10 +164,14 @@ for lev in conf['levels']['height_agl']:
 
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
+        print()
+        print(conf['plot']['var']+' metrics: '+c['name']+' - '+base['name']+\
+            ' at '+str(lev)+' '+conf['levels']['height_units'])
+        print()
+        for key, val in results[0].items():
+            if key != 'path': 
+                if isinstance(val, float): 
+                    print(str(key)+': '+str(np.round(val, 3)))
+
         plotting.plot_pair_lines(combine_df, lev)
         plotting.plot_pair_scatter(combine_df, lev)
-
-    for key, val in results[0].items():
-        if key != 'path': 
-            if isinstance(val, float): 
-                print(str(key)+': '+str(np.round(val, 3)))

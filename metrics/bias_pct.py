@@ -13,7 +13,8 @@
 import numpy as np
 
 class bias_pct:
-
-  def compute(self,x,y):
-
-    return float(np.mean(100 * (x - y) / x ))
+    
+    def compute(self,x,y):
+        
+        # x is baseline
+        return float(np.mean(100 * (y - x) / x ))

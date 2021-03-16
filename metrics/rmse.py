@@ -7,14 +7,13 @@
 # so that the size is the same. Error is computed pairwise without regard
 # to the timestamps.
 #
-# Caleb Phillips <caleb.phillips@nrel.gov>
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 
 import numpy as np
 
 class rmse:
+    
+    def compute(self,x,y):
 
-  def compute(self,x,y):
-
-    return float(np.sqrt(np.mean(x - y)**2))
+        return float(np.sqrt( (np.mean(x - y)**2) / len(x) ))
