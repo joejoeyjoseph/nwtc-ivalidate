@@ -42,6 +42,9 @@ class plot_data:
 
             plt.scatter(df[pair[0]], df[pair[1]], c='k')
 
+            cal_df = df.dropna()
+            corr = np.corrcoef(cal_df[pair[0]], cal_df[pair[1]])[0, 1]
+
             line_min = np.nanmin([df[pair[0]], df[pair[1]]])
             line_max = np.nanmax([df[pair[0]], df[pair[1]]])
             xy1to1 = np.linspace(line_min*0.9, line_max*1.1)
@@ -49,6 +52,7 @@ class plot_data:
 
             plt.xlabel(pair[0]+' ('+self.units+')')
             plt.ylabel(pair[1]+' ('+self.units+')')
-            plt.title(self.var+' at '+str(lev)+' '+self.lev_units+' a.g.l.')
+            plt.title(self.var+' at '+str(lev)+' '+self.lev_units+' a.g.l., r = '+\
+                str(round(corr, 3)))
 
             plt.show()

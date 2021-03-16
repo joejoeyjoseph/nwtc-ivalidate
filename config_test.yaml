@@ -11,7 +11,6 @@ time:
     lower: 2016-09-23 12:00:00
     # validation period end time
     upper: 2016-09-25 12:00:00
-  # trim: left # can be left or right
 
 # validation metrics to be calculated and plotted
 metrics:
@@ -25,8 +24,9 @@ levels:
   # height level of validation above ground level
   height_agl: 
     - 40
-    # - 80
-    # - 120
+    - 80
+    - 120
+  height_units: m
 
 # baseline dataset
 base:
@@ -50,7 +50,7 @@ base:
   format: sodar_netcdf
   # variables to validate
   var: wind_speed
-  # target variable name to display
+  # target variable name to be displayed
   target_var: sodar_ws
   # data frequency in minutes
   freq: 10
@@ -67,9 +67,16 @@ comp:
     var: 
       - u
       - v
-    # target variable name to display
+    # target variable name to be displayed
     target_var: wrf_ws
     # data frequency in minutes
     freq: 5
     # flag value
     flag: 999
+
+# plotting 
+plot: 
+  # variable name to be displayed
+  var: wind speed
+  # variable units
+  units: ms-1

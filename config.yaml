@@ -24,8 +24,8 @@ levels:
   # height level of validation above ground level
   height_agl: 
     - 40
-    # - 80
-    # - 120
+    - 80
+    - 120
   height_units: m
 
 # baseline dataset
@@ -37,7 +37,7 @@ base:
   format: sodar_netcdf
   # names of variables in data to validate
   var: wind_speed
-  # target variable name to display
+  # target variable name to be displayed
   target_var: sodar_ws
   # data frequency in minutes
   freq: 10
@@ -55,7 +55,7 @@ comp:
     var: 
       - u
       - v
-    # target variable name to display
+    # target variable name to be displayed
     target_var: wrf_ws
     # data frequency in minutes
     freq: 5
@@ -64,5 +64,7 @@ comp:
 
 # plotting 
 plot: 
+  # variable name to be displayed
   var: wind speed
+  # variable units
   units: ms-1

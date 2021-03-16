@@ -2,8 +2,7 @@
 #
 # This script runs the comparison between timeseries data as specified in config.yaml
 #
-# Caleb Phillips <caleb.phillips@nrel.gov>
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 import yaml
 import sys
@@ -18,10 +17,9 @@ import pathlib
 import numpy as np
 import pandas as pd
 import itertools
-# from qc import check_input_data
 
-config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
-# config_file = str(pathlib.Path(os.getcwd()).parent) + '/config_test.yaml'
+# config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
+config_file = str(pathlib.Path(os.getcwd()).parent) + '/config_test.yaml'
 
 sys.path.append('.')
 
