@@ -21,6 +21,7 @@ import itertools
 from qc import check_input_data
 
 config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
+# config_file = str(pathlib.Path(os.getcwd()).parent) + '/config_test.yaml'
 
 sys.path.append('.')
 

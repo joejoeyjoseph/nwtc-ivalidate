@@ -31,11 +31,24 @@ levels:
 # baseline dataset
 base:
   name: sodar
+
   # data directory
-  path: data/mw_data_sodar
-  # name of data processing function
+  # path: data/mw_data_sodar
+
+  # add sodar.z06.b0.20160924.170000.txt2.a2e.nc, sodar.z06.b0.20160924.171001.txt2.a2e.nc
+  # path: data/test_sodar_dup
+  
+  # delete sodar.z06.b0.20160924.170000.txt.a2e.nc
+  # path: data/test_sodar_gap
+  
+  # duplicate & missing data
+  # path: data/test_sodar_dupgap 
+
+  # duplicate & missing data, miss first 12 hours
+  path: data/test_sodar_shortdupgap 
+  
   format: sodar_netcdf
-  # names of variables in data to validate
+  # variables to validate
   var: wind_speed
   # target variable name to display
   target_var: sodar_ws
@@ -49,9 +62,8 @@ comp:
   - name: wrf
     # data directory
     path: data/mw_data_wrf
-    # name of data processing function
     format: wrf_netcdf
-    # names of variables in data to validate
+    # variables to validate
     var: 
       - u
       - v
