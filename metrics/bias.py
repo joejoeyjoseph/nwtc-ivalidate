@@ -7,7 +7,7 @@
 # so that the size is the same. Error is computed pairwise without regard
 # to the timestamps.
 #
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 import numpy as np
 

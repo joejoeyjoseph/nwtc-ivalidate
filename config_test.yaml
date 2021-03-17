@@ -60,8 +60,13 @@ base:
 # data input to be compared with the baseline dataset
 comp:
   - name: wrf
+
     # data directory
-    path: data/mw_data_wrf
+    # path: data/mw_data_wrf
+
+    # duplicate & missing data, miss first 12 hours
+    path: data/test_wrf_shortdupgap
+
     format: wrf_netcdf
     # variables to validate
     var: 

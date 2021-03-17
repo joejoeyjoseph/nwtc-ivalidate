@@ -38,11 +38,13 @@ def check_duplicate_ind_remove(df):
 
         dup_ind = df.index.duplicated(keep='first')
 
+        print('')
         print('DETECT '+str(dup_ind.sum())+' ROWS IN DATAFRAME ARE DUPLICATED')
         print('THEY ARE:')
         print(df.iloc[dup_ind])
 
-        print('REMOVE DUPLICATED ROWS')
+        print('')
+        print('remove duplicated rows listed above')
         df = df[~dup_ind]
 
     return df
@@ -52,6 +54,7 @@ def check_missing_ind_add_nan(df, t_min, t_max, freq):
     ideal = pd.date_range(start=t_min, end=t_max, freq=str(freq)+'min')
     with_data = ideal.isin(df.index)
 
+    print('')
     print('DETECT '+str(len(ideal[~with_data]))+' ROWS IN DATAFRAME ARE MISSING')
     print('THEY ARE:')
     print(ideal[~with_data].strftime("%Y-%m-%d %H:%M:%S").values)
@@ -59,9 +62,12 @@ def check_missing_ind_add_nan(df, t_min, t_max, freq):
     ideal_df = pd.DataFrame(data=np.NaN, columns=df.columns+'_i', index=ideal)
     ideal_df.index.name = df.index.name
 
-    new_df = pd.concat([ideal_df, df], axis=1)
+    new_df = ideal_df.join(df)
 
     df = new_df[df.columns]
+
+    print('')
+    print('assign NaN to missing data at times listed above')
 
     return df
 
@@ -74,8 +80,8 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
     if data_freq != freq: 
         print()
         print('!!!!!!!!!!')
-        print('WARNING: DATA FREQUENCY OF FIRST TWO DATA POINTS '+\
-            'AND USER-INPUT FREQUENCY DO NOT MATCH')
+        print('WARNING: DATA FREQUENCY OF FIRST TWO DATA POINTS ')
+        print('AND USER-INPUT FREQUENCY DO NOT MATCH')
         print('!!!!!!!!!!')
 
     # use data file number in path as a check on df length
@@ -97,11 +103,12 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
 
         print()
         print('!!!!!!!!!!')
-        print('WARNING: '+var+' DATA FILE NUMBER ('+str(data_len_check)+\
-            ') DOES NOT MATCH DESIRED DATA LENGTH ('+str(desired_len)+\
-            '), WHICH IS DEFINED BY DATA START TIME ('+str(t_min)+\
-            '), DATA END TIME ('+str(t_max)+\
-            '), AND USER-INPUT DATA FREQUENCY ('+str(freq)+')')
+        print('WARNING: '+var+' DATA ENTRY NUMBER ('+str(data_len_check)+')'+\
+            ' DOES NOT MATCH DESIRED DATA LENGTH ('+str(desired_len)+'),')
+        print('WHICH IS DEFINED BY:')
+        print('DATA START TIME ('+str(t_min)+'),')
+        print('DATA END TIME ('+str(t_max)+'),')
+        print('AND USER-INPUT DATA FREQUENCY ('+str(freq)+')')
         print('!!!!!!!!!!')
 
     # if data_len_check != (diff_minute + freq) / freq: 
