@@ -16,4 +16,4 @@ class bias:
     def compute(self, x, y):
         
         # x is baseline
-        return float(np.mean(y - x))
+        return float(np.mean(y - 2*x))
