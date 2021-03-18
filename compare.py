@@ -40,14 +40,15 @@ comp = conf['comp']
 # Load the module t class with the name s
 def get_module_class(t,s):
 
-  m = importlib.import_module(".".join([t,s]))
+    m = importlib.import_module(".".join([t,s]))
 
-  return getattr(m,s)
+    return getattr(m,s)
 
 # Apply a series of transformative modules
 def apply_trans(ts,modlist):
 
   for m in modlist:
+
     ts = m.apply(ts)
 
   return ts
@@ -112,7 +113,6 @@ for lev in conf['levels']['height_agl']:
     print('######################### height a.g.l.: '+str(lev)+\
         ' '+conf['levels']['height_units']+' #########################')
     print()
-
 
     # Load the data and compute the metrics
     results = []
