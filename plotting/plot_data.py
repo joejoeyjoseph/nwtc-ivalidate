@@ -2,7 +2,7 @@
 # 
 # Plot data
 # 
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 import pandas as pd
 import numpy as np
@@ -56,3 +56,17 @@ class plot_data:
                 str(round(corr, 3)))
 
             plt.show()
+
+    def plot_pair_histogram(self, df, lev): 
+
+        for col in df.columns: 
+            
+            plt.hist(df[col], bins=15, alpha=0.4, label=col)
+
+        plt.legend()
+
+        plt.xlabel(self.var+' ('+self.units+')')
+        plt.ylabel('count')
+        plt.title(self.var+' at '+str(lev)+' m a.g.l.')
+
+        plt.show()

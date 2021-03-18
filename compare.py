@@ -19,8 +19,8 @@ import numpy as np
 import pandas as pd
 import itertools
 
-# config_file = str(pathlib.Path(os.getcwd()).parent) + '/config.yaml'
-config_file = str(pathlib.Path(os.getcwd()).parent) + '/config_test.yaml'
+# config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
+config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
 
 sys.path.append('.')
 
@@ -31,14 +31,14 @@ base = conf['base']
 comp = conf['comp']
 
 # Load the module t class with the name s
-def get_module_class(t,s):
+def get_module_class(t, s):
 
-    m = importlib.import_module(".".join([t,s]))
+    m = importlib.import_module(".".join([t, s]))
 
-    return getattr(m,s)
+    return getattr(m, s)
 
 # Apply a series of transformative modules
-def apply_trans(ts,modlist):
+def apply_trans(ts, modlist):
 
   for m in modlist:
 
@@ -47,7 +47,7 @@ def apply_trans(ts,modlist):
   return ts
 
 # Pre-load all the metric modules into an array
-metrics = [get_module_class("metrics",m)() for m in conf["metrics"]]
+metrics = [get_module_class("metrics", m)() for m in conf["metrics"]]
 
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
@@ -62,8 +62,8 @@ plotting = get_module_class('plotting', 'plot_data')(conf)
 for lev in conf['levels']['height_agl']: 
 
     print()
-    print('######################### height a.g.l.: '+str(lev)+\
-        ' '+conf['levels']['height_units']+' #########################'
+    print('######################### height a.g.l.: '+str(lev)\
+        +' '+conf['levels']['height_units']+' #########################'
         )
     print()
 
@@ -86,17 +86,19 @@ for lev in conf['levels']['height_agl']:
 
         # run __init__
         c["input"] = get_module_class("inputs", c["format"])(c["path"], \
-            c["var"],c['target_var']
+            c["var"], c['target_var']
             )
 
         c["data"] = c["input"].get_var_ts(conf["location"], lev, c['freq'], \
             c['flag']
             )
 
-        results.append({'truth name': base['name'], 'model name': c['name'], \
-                        "path": c["path"], \
-                        "location": conf["location"], "var": c["var"]}
-                        )
+        results.append({'truth name': base['name'], \
+            'model name': c['name'], \
+            "path": c["path"], \
+            "location": conf["location"], \
+            "var": c["var"]}
+            )
 
         combine_df = crosscheck_ts.align_time(base["data"], c["data"])
 
@@ -104,8 +106,8 @@ for lev in conf['levels']['height_agl']:
 
         only_na = combine_df[~combine_df.index.isin(compute_df.index)]
         print()
-        print('to calculate metrics, removing the following time steps'+\
-            ' that contain NaN values:'
+        print('to calculate metrics, removing the following time steps'\
+            +' that contain NaN values:'
             )
         print(only_na.index.strftime("%Y-%m-%d %H:%M:%S").values)
 
@@ -119,8 +121,8 @@ for lev in conf['levels']['height_agl']:
 
         if len(x) != len(y): 
 
-            sys.exit('Lengths of baseline and compare datasets are'+\
-                ' not equal!'
+            sys.exit('Lengths of baseline and compare datasets are'\
+                +' not equal!'
                 )
 
         for m in metrics: 
@@ -128,8 +130,8 @@ for lev in conf['levels']['height_agl']:
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
         print()
-        print(conf['plot']['var']+' metrics: '+c['name']+' - '+base['name']+\
-            ' at '+str(lev)+' '+conf['levels']['height_units']
+        print(conf['plot']['var']+' metrics: '+c['name']+' - '+base['name']\
+            +' at '+str(lev)+' '+conf['levels']['height_units']
             )
         print()
         for key, val in results[0].items():
@@ -139,3 +141,4 @@ for lev in conf['levels']['height_agl']:
 
         plotting.plot_pair_lines(combine_df, lev)
         plotting.plot_pair_scatter(combine_df, lev)
+        plotting.plot_pair_histogram(combine_df, lev)

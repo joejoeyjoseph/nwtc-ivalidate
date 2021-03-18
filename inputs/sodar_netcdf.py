@@ -2,7 +2,7 @@
 #
 # This is a basic parser for NetCDF data.
 #
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 import os
 import pathlib

@@ -6,8 +6,7 @@
 # we expect that the file has a field called XLAT which is a matrix of latitude values for the grid and
 # XLONG which is a matrix of longitude values for the grid.
 #
-# Caleb Phillips <caleb.phillips@nrel.gov>
-# Joseph Lee <joseph.lee@nrel.gov>
+# Joseph Lee <joseph.lee@pnnl.gov>
 
 import os
 import pathlib
