@@ -8,7 +8,6 @@
 #
 # Joseph Lee <joseph.lee@nrel.gov>
 
-
 import numpy as np
 
 class mae:

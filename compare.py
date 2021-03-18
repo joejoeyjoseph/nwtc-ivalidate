@@ -8,11 +8,11 @@
 import yaml
 import sys
 import importlib
-import json
-import dateutil
-import re
-import base64
-import requests
+# import json
+# import dateutil
+# import re
+# import base64
+# import requests
 import os
 import pathlib
 import numpy as np
@@ -33,7 +33,7 @@ comp = conf['comp']
 # Load the module t class with the name s
 def get_module_class(t, s):
 
-    m = importlib.import_module(".".join([t, s]))
+    m = importlib.import_module('.'.join([t, s]))
 
     return getattr(m, s)
 
@@ -47,7 +47,7 @@ def apply_trans(ts, modlist):
   return ts
 
 # Pre-load all the metric modules into an array
-metrics = [get_module_class("metrics", m)() for m in conf["metrics"]]
+metrics = [get_module_class('metrics', m)() for m in conf['metrics']]
 
 print('validation start time:', conf['time']["window"]["lower"])
 print('validation end time:', conf['time']["window"]["upper"])
@@ -140,5 +140,5 @@ for lev in conf['levels']['height_agl']:
                     print(str(key)+': '+str(np.round(val, 3)))
 
         plotting.plot_pair_lines(combine_df, lev)
-        plotting.plot_pair_scatter(combine_df, lev)
         plotting.plot_pair_histogram(combine_df, lev)
+        plotting.plot_pair_scatter(combine_df, lev)

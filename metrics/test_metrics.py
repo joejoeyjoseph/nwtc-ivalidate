@@ -71,4 +71,4 @@ def test_series_rmse():
 
     result = metric_obj.compute(x_eg, y_eg)
 
-    assert math.isclose(result, 0.7155, rel_tol=1e-4)
+    assert math.isclose(result, 5.899, rel_tol=1e-4)
