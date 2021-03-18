@@ -1,11 +1,31 @@
 # run unit tests
 
-from bias import bias
+import importlib
+import pandas as pd
 
-print('hi')
+test_dir = 'metrics'
 
-bias.compute(5, 4)
+def test_bias(): 
 
-def test_compute(): 
+    metric = 'bias'
 
-    assert bias.compute(5, 4) == 0
+    metric_module = importlib.import_module(".".join([test_dir, metric]))
+
+    metric_obj = getattr(metric_module, metric)()
+
+    assert metric_obj.compute(5, 4) == -1
+
+def test_series_bias(): 
+
+    metric = 'bias'
+
+    metric_module = importlib.import_module(".".join([test_dir, metric]))
+
+    metric_obj = getattr(metric_module, metric)()
+
+    # assert metric_obj.compute(5, 4) == -1
+
+    x = pd.Series([0, 0, 0])
+    y = pd.Series([1, 2, 3])
+
+    assert metric_obj.compute(x, y) == 2
