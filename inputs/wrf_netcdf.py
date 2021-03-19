@@ -14,93 +14,64 @@ from datetime import datetime
 from netCDF4 import Dataset
 import numpy as np
 import pandas as pd
+
 from qc import check_input_data
+
 
 class wrf_netcdf:
 
-  def __init__(self,path,var, target_var):
+    def __init__(self, path, var, target_var):
 
-    self.path = str(pathlib.Path(os.getcwd()).parent) + '/' + str(path)
-    self.var = var
-    self.target_var = target_var
+        self.path = str(pathlib.Path(os.getcwd()).parent)+'/'+str(path)
+        self.var = var
+        self.target_var = target_var
 
-  def get_ij(self,ih,loc):
+    # for WRF MW case (extracted from Eagle)
+    def get_ij(self, ih, loc):
 
-    lat = np.array(ih["XLAT"][0])
-    lon = np.array(ih["XLONG"][0])
-    #print(lat)
-    # if lat/lon were arrays (instead of matrixes) something like this would work:
-    #d = np.fromfunction(lambda x,y: (lon[x] - loc["lon"])**2 + (lat[y] - loc["lat"])**2, (len(lon), len(lat)), dtype=float)
-    d = (lat - loc["lat"])**2 + (lon - loc["lon"])**2
-    i,j = np.unravel_index(np.argmin(d),d.shape)
+        lat = np.array(ih['XLAT'])
+        lon = np.array(ih['XLONG'])
 
-    return (i,j)
+        # if lat/lon were arrays (instead of matrixes) something like this would work:
+        # d = np.fromfunction(lambda x,y: (lon[x] - loc['lon'])**2 + (lat[y] - loc['lat'])**2, (len(lon), len(lat)), dype=float)
+        d = (lat - loc['lat'])**2 + (lon - loc['lon'])**2
 
-  def get_ts(self,loc):
+        i, j = np.unravel_index(np.argmin(d), d.shape)
 
-    df = pd.DataFrame({"t": [], self.var: []})
+        return i, j
 
-    for l in os.listdir(self.path):
+    def get_ts(self, loc, lev, freq, flag):
 
-      ih = Dataset(self.path + "/" + l, 'r')
-      #print(ih.variables)
-      i,j = self.get_ij(ih,loc)
-      s = "".join(map(bytes.decode, ih.variables["Times"][0]))
-      t = datetime.strptime(s, "%Y-%m-%d_%H:%M:%S")
-      print(t)
-      v = ih.variables[self.var][0][i][j]
-      print(v)
-      ih.close()
-      df = df.append([{"t":t, self.var:v}])
+        df = pd.DataFrame({'t': [], self.target_var: []})
 
-    df = df.set_index("t").sort_index()
+        # to print an empty line before masked value error messages
+        mask_i = 0
 
-    return df
+        for file in os.listdir(self.path):
 
-  ### for WRF MW case (extracted from Eagle) ###
+            data = Dataset(self.path+'/'+file, 'r')
+            i, j = self.get_ij(data, loc)
 
-  def get_var_ij(self,ih,loc):
+            s = file.split('_')[2]+'_'+file.split('_')[3].split('.')[0]+':'\
+                + file.split('_')[4]+':'+file.split('_')[5].split('.')[0]
+            t = datetime.strptime(s, '%Y-%m-%d_%H:%M:%S')
 
-    lat = np.array(ih["XLAT"])
-    lon = np.array(ih["XLONG"])
-    #print(lat)
-    # if lat/lon were arrays (instead of matrixes) something like this would work:
-    #d = np.fromfunction(lambda x,y: (lon[x] - loc["lon"])**2 + (lat[y] - loc["lat"])**2, (len(lon), len(lat)), dtype=float)
-    d = (lat - loc["lat"])**2 + (lon - loc["lon"])**2
-    i,j = np.unravel_index(np.argmin(d),d.shape)
+            height_ind = np.where(data['level'][:].data == lev)[0][0]
 
-    return (i,j)
+            u = data.variables[self.var[0]][height_ind][i][j]
+            v = data.variables[self.var[1]][height_ind][i][j]
+            ws = np.sqrt(u**2 + v**2)
 
-  def get_var_ts(self,loc,lev, freq, flag):
+            ws, mask_i = check_input_data.convert_mask_to_nan(ws, t, mask_i)
+            ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
-    df = pd.DataFrame({"t": [], self.target_var: []})
+            data.close()
+            df = df.append([{'t': t, self.target_var: ws}])
 
-    mask_i = 0
+        df = df.set_index('t').sort_index()
 
-    for l in os.listdir(self.path):
+        df = check_input_data.verify_data_file_count(df, self.target_var,
+                                                     self.path, freq
+                                                     )
 
-      ih = Dataset(self.path + "/" + l, 'r')
-      i,j = self.get_var_ij(ih,loc)
-
-      s = l.split('_')[2]+'_'+l.split('_')[3].split('.')[0]+':'\
-          +l.split('_')[4]+':'+l.split('_')[5].split('.')[0]
-      t = datetime.strptime(s, "%Y-%m-%d_%H:%M:%S")
-
-      #level = 3
-      height_ind = np.where(ih['level'][:].data == lev)[0][0]
-      #print(height_ind)
-      u = ih.variables[self.var[0]][height_ind][i][j]
-      v = ih.variables[self.var[1]][height_ind][i][j]
-      ws = np.sqrt(u**2 + v**2)
-
-      ws, mask_i = check_input_data.convert_mask_to_nan(ws, t, mask_i)
-      ws = check_input_data.convert_flag_to_nan(ws, flag, t)
-
-      ih.close()
-      df = df.append([{"t": t, self.target_var: ws}])
-
-    df = df.set_index("t").sort_index()
-
-    df = check_input_data.verify_data_file_count(df, self.target_var, self.path, freq)
-
-    return df
+        return df

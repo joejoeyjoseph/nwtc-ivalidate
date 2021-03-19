@@ -1,6 +1,6 @@
 # rmse.py
 #
-# This is a naive root mean squared error (RMSE) calculation, 
+# This is a naive root mean squared error (RMSE) calculation,
 # rmse = root(mean((x - y)^2))
 #
 # If the input vectors differ, it takes the first N elements of each
@@ -11,8 +11,9 @@
 
 import numpy as np
 
-class rmse:
-    
-    def compute(self,x,y):
 
-        return float(np.sqrt(np.mean( (x - y)**2 )))
+class rmse:
+
+    def compute(self, x, y):
+
+        return float(np.sqrt(np.mean((x - y)**2)))
