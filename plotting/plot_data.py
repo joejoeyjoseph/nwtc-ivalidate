@@ -1,7 +1,7 @@
 # plot_data.py
-# 
+#
 # Plot data
-# 
+#
 # Joseph Lee <joseph.lee@pnnl.gov>
 
 import pandas as pd
@@ -10,24 +10,25 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import itertools
 
+
 class plot_data:
 
-    def __init__(self, conf): 
+    def __init__(self, conf):
 
         self.var = conf['plot']['var']
         self.lev_units = conf['levels']['height_units']
-        
+
         if conf['plot']['units'] == 'ms-1':
-            
+
             self.units = r'm $s^{-1}$'
 
-    def plot_pair_lines(self, df, lev): 
+    def plot_pair_lines(self, df, lev):
 
-        for col in df.columns: 
-            
+        for col in df.columns:
+
             plt.plot(df.index, df[col], label=col)
 
-        plt.xticks(rotation=90) 
+        plt.xticks(rotation=90)
         plt.legend()
 
         plt.xlabel('time')
@@ -36,9 +37,9 @@ class plot_data:
 
         plt.show()
 
-    def plot_pair_scatter(self, df, lev): 
+    def plot_pair_scatter(self, df, lev):
 
-        for pair in itertools.combinations(df.columns, 2): 
+        for pair in itertools.combinations(df.columns, 2):
 
             plt.scatter(df[pair[0]], df[pair[1]], c='k')
 
@@ -52,15 +53,16 @@ class plot_data:
 
             plt.xlabel(pair[0]+' ('+self.units+')')
             plt.ylabel(pair[1]+' ('+self.units+')')
-            plt.title(self.var+' at '+str(lev)+' '+self.lev_units+' a.g.l., r = '+\
-                str(round(corr, 3)))
+            plt.title(self.var+' at '+str(lev)+' '+self.lev_units
+                      + ' a.g.l., r = '+str(round(corr, 3))
+                      )
 
             plt.show()
 
-    def plot_pair_histogram(self, df, lev): 
+    def plot_pair_histogram(self, df, lev):
 
-        for col in df.columns: 
-            
+        for col in df.columns:
+
             plt.hist(df[col], bins=15, alpha=0.4, label=col)
 
         plt.legend()
