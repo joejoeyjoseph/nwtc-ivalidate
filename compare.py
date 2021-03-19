@@ -105,7 +105,7 @@ for lev in conf['levels']['height_agl']:
         compute_df = combine_df.dropna()
 
         only_na = combine_df[~combine_df.index.isin(compute_df.index)]
-        
+
         print()
         print('to calculate metrics, removing the following time steps'
               + ' that contain NaN values:'

@@ -23,8 +23,8 @@ metrics:
 levels: 
   # height level of validation above ground level
   height_agl: 
-    # - 40
-    # - 80
+    - 40
+    - 80
     - 120
   height_units: m
 
