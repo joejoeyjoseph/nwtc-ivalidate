@@ -15,6 +15,7 @@ time:
 # validation metrics to be calculated and plotted
 metrics:
   - rmse
+  - crmse
   - bias
   - bias_pct
   - mae

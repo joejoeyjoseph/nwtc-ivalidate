@@ -131,15 +131,23 @@ for lev in conf['levels']['height_agl']:
             results[ind][m.__class__.__name__] = m.compute(x, y)
 
         print()
-        print(conf['plot']['var']+' metrics: '+c['name']+' - '+base['name']
-              + ' at '+str(lev)+' '+conf['levels']['height_units']
+        print('==-- '+conf['plot']['var']+' metrics: '+c['name']+' - '
+              + base['name']+' at '+str(lev)+' '
+              + conf['levels']['height_units']+' --=='
               )
         print()
 
         for key, val in results[0].items():
             if key != 'path':
                 if isinstance(val, float):
-                    print(str(key)+': '+str(np.round(val, 3)))
+
+                    end_units = ''
+                    suffix_pct = 'pct'
+
+                    if str(key).endswith(suffix_pct):
+                        end_units = '%'
+
+                    print(str(key)+': '+str(np.round(val, 3))+end_units)
 
         plotting.plot_pair_lines(combine_df, lev)
         plotting.plot_pair_histogram(combine_df, lev)
