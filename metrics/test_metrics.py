@@ -83,3 +83,12 @@ def test_series_rmse():
     result = metric_obj.compute(x_eg, y_eg)
 
     assert math.isclose(result, 5.899, rel_tol=1e-4)
+
+
+def test_series_crmse():
+
+    metric_obj = load_obj('crmse')
+
+    result = metric_obj.compute(x_eg, y_eg)
+
+    assert math.isclose(result, 5.678, rel_tol=1e-4)
