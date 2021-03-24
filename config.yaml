@@ -24,9 +24,9 @@ metrics:
 levels: 
   # height level of validation above ground level
   height_agl: 
-    - 40
+    # - 40
     - 80
-    - 120
+    # - 120
   height_units: m
 
 # baseline dataset
@@ -35,9 +35,12 @@ base:
   # data directory
   path: data/mw_data_sodar
   # name of data processing function
-  format: sodar_netcdf
+  function: sodar_netcdf
   # names of variables in data to validate
   var: wind_speed
+  # nature of variable
+  # ws: wind speed -- run power curve functions
+  nature: ws
   # target variable name to be displayed
   target_var: sodar_ws
   # data frequency in minutes
@@ -51,17 +54,35 @@ comp:
     # data directory
     path: data/mw_data_wrf
     # name of data processing function
-    format: wrf_netcdf
+    function: wrf_netcdf
     # names of variables in data to validate
     var: 
       - u
       - v
+    # nature of variable
+    # ws: wind speed -- run power curve functions
+    nature: ws
     # target variable name to be displayed
     target_var: wrf_ws
     # data frequency in minutes
     freq: 5
     # flag value
     flag: 999
+
+# power curve
+power_curve: 
+  # power curve csv data location
+  path: data/power_curve
+  # power curve csv name
+  file: 2018COE_Market_Average_2.4MW_116.csv
+  # name of data processing function
+  function: pc_csv
+  # wind speed column name in data file
+  ws: Wind Speed [m/s]
+  # power column name in data file
+  power: Power [kW]
+  # hub height above ground level
+  hub_height: 80
 
 # plotting 
 plot: 

@@ -14,8 +14,8 @@ import numpy as np
 import pandas as pd
 import itertools
 
-# config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
-config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
+config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
+# config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
 
 sys.path.append('.')
 
@@ -23,6 +23,9 @@ conf = yaml.load(open(config_file), Loader=yaml.FullLoader)
 
 base = conf['base']
 comp = conf['comp']
+p_curve = conf['power_curve']
+
+print(p_curve)
 
 
 # Load the module t class with the name s
@@ -56,6 +59,8 @@ crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
 
 plotting = get_module_class('plotting', 'plot_data')(conf)
 
+all_lev_df = pd.DataFrame()
+
 for lev in conf['levels']['height_agl']:
 
     print()
@@ -71,10 +76,10 @@ for lev in conf['levels']['height_agl']:
 
     # run __init__
     base['input'] = get_module_class('inputs',
-                                     base['format'])(base['path'],
-                                                     base['var'],
-                                                     base['target_var']
-                                                     )
+                                     base['function'])(base['path'],
+                                                       base['var'],
+                                                       base['target_var']
+                                                       )
 
     base['data'] = base['input'].get_ts(lev, base['freq'], base['flag'])
 
@@ -85,9 +90,9 @@ for lev in conf['levels']['height_agl']:
 
         # run __init__
         c['input'] = get_module_class('inputs',
-                                      c['format'])(c['path'], c['var'],
-                                                   c['target_var']
-                                                   )
+                                      c['function'])(c['path'], c['var'],
+                                                     c['target_var']
+                                                     )
 
         c['data'] = c['input'].get_ts(conf['location'], lev, c['freq'],
                                       c['flag']
@@ -149,6 +154,72 @@ for lev in conf['levels']['height_agl']:
 
                     print(str(key)+': '+str(np.round(val, 3))+end_units)
 
-        plotting.plot_pair_lines(combine_df, lev)
-        plotting.plot_pair_histogram(combine_df, lev)
+        plotting.plot_ts_line(combine_df, lev)
+        plotting.plot_histogram(combine_df, lev)
         plotting.plot_pair_scatter(combine_df, lev)
+
+        combine_df.columns = pd.MultiIndex.from_product([[lev],
+                                                        combine_df.columns]
+                                                        )
+
+        # print(combine_df.head())
+
+        # print(combine_df.index)
+        # print(all_lev_df.index)
+
+        # print(all_lev_df.shape)
+
+        if all_lev_df.empty:
+            # print('here')
+            all_lev_df = all_lev_df.append(combine_df)
+        else:
+            # all_lev_df = all_lev_df.merge(combine_df)
+            all_lev_df = pd.concat([all_lev_df, combine_df], axis=1)
+
+        # print(all_lev_df.shape)
+        # print(all_lev_df.head())
+        # print(all_lev_df.tail())
+
+for ind, c in enumerate(comp):
+
+    # print(base['nature'])
+    # print(c['nature'])
+
+    # if both variables are wind speed
+    # and hub height exists in validation levels
+    if (
+        base['nature'] == 'ws' and c['nature'] == 'ws'
+        and p_curve['hub_height'] in all_lev_df.columns.get_level_values(0)
+    ):
+
+        # plot_pcurve = get_module_class('plotting', 'plot_pc')(conf)
+
+        hhws_df = all_lev_df.xs(p_curve['hub_height'], level=0, axis=1)
+
+        # print(hh_df.head())
+
+        pc_csv = get_module_class('inputs', p_curve['function'])(
+            p_curve['path'], p_curve['file'], p_curve['ws'],
+            p_curve['power'], hhws_df, p_curve['hub_height'], conf
+            )
+
+        # print(p_curve['input'])
+
+        p_df = pc_csv.get_power()
+        print(p_df.head())
+
+        # plot simulated power curves, not extremely useful
+        # p_curve['input'].plot_pc()
+
+        pc_csv.plot_power_ts()
+
+        pc_csv.tplot_power_ts()
+
+        # plot_pcurve.plot_sct(hhws_df, p_df)
+
+    else:
+
+        print('either baseline and compare data are not wind speed, '
+              + 'or hub height does not exist in validation data, '
+              + 'hence power curve is not derived'
+              )

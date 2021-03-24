@@ -7,7 +7,6 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
 import itertools
 
 
@@ -22,7 +21,7 @@ class plot_data:
 
             self.units = r'm $s^{-1}$'
 
-    def plot_pair_lines(self, df, lev):
+    def plot_ts_line(self, df, lev, self_units=True):
 
         for col in df.columns:
 
@@ -32,7 +31,10 @@ class plot_data:
         plt.legend()
 
         plt.xlabel('time')
-        plt.ylabel(self.var+' ('+self.units+')')
+        if self_units is True:
+            plt.ylabel(self.var+' ('+self.units+')')
+        else:
+            plt.ylabel(self.var)
         plt.title(self.var+' at '+str(lev)+' m a.g.l.')
 
         plt.show()
@@ -59,7 +61,7 @@ class plot_data:
 
             plt.show()
 
-    def plot_pair_histogram(self, df, lev):
+    def plot_histogram(self, df, lev):
 
         for col in df.columns:
 
