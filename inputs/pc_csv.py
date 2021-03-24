@@ -7,7 +7,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from plotting import plot_data
+# from plotting import plot_data
+from tools import module_tools
 
 
 class pc_csv:
@@ -35,11 +36,16 @@ class pc_csv:
 
     def tplot_power_ts(self):
 
-        metric_obj = self.load_obj('plot_data')
+        # metric_obj = self.load_obj('plot_data')
 
-        print(metric_obj)
+        # print(metric_obj)
 
-        metric_obj.plot_ts_line(self.p_df, self.hh, self_units=False)
+        # metric_obj.plot_ts_line(self.p_df, self.hh, self_units=False)
+
+        plotting = module_tools.get_module_class('plotting', 'plot_data')(
+            self.conf)
+
+        plotting.plot_ts_line(self.p_df, self.hh, self_units=False)
 
     def get_power(self):
 

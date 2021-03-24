@@ -27,16 +27,6 @@ base = conf['base']
 comp = conf['comp']
 p_curve = conf['power_curve']
 
-# Apply a series of transformative modules
-def apply_trans(ts, modlist):
-
-    for m in modlist:
-
-        ts = m.apply(ts)
-
-    return ts
-
-
 # Pre-load all the metric modules into an array
 # metrics = [get_module_class('metrics', m)() for m in conf['metrics']]
 metrics = [module_tools.get_module_class('metrics', m)()
