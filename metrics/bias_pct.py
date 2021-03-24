@@ -13,5 +13,11 @@ class bias_pct:
 
     def compute(self, x, y):
 
+        # print(x)
+        # print(y)
+
+        # x = np.ma.masked_invalid(x)
+
         # x is baseline
-        return float(np.mean(100 * (y - x) / x))
+        # return float(np.mean(100 * (y - x) / x))
+        return float(np.mean(100 * np.ma.masked_invalid((y - x) / x)))

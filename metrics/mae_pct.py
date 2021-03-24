@@ -15,4 +15,4 @@ class mae_pct:
 
         # float(np.mean(100 * abs(np.array(x) - np.array(y)) / np.array(x) ))
 
-        return float(np.mean(100 * abs(x - y) / x))
+        return float(np.mean(100 * np.ma.masked_invalid(abs(x - y) / x)))
