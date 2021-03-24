@@ -4,6 +4,7 @@ import importlib
 import pandas as pd
 import math
 
+from tools import module_tools
 
 test_dir = 'metrics'
 
@@ -11,74 +12,79 @@ x_eg = pd.Series([2, 2, 2, 2, 16])
 y_eg = pd.Series([4, 5, 6, -7, 8])
 
 
-def load_obj(metric):
+# def load_obj(metric):
 
-    metric_module = importlib.import_module('.'.join([test_dir, metric]))
+#     metric_module = importlib.import_module('.'.join([test_dir, metric]))
 
-    metric_obj = getattr(metric_module, metric)()
+#     metric_obj = getattr(metric_module, metric)()
 
-    return metric_obj
+#     return metric_obj
 
 
 def test_bias():
 
-    metric_obj = load_obj('bias')
+    metric_obj = module_tools.get_module_class(test_dir, 'bias')()
+    # metric_obj = load_obj('bias')
 
     assert metric_obj.compute(5, 4) == -1
 
 
 def test_series_bias():
 
-    metric_obj = load_obj('bias')
+    metric_obj = module_tools.get_module_class(test_dir, 'bias')()
 
     assert metric_obj.compute(x_eg, y_eg) == -1.6
 
 
 def test_bias_pct():
 
-    metric_obj = load_obj('bias_pct')
+    # metric_obj = load_obj('bias_pct')
+    metric_obj = module_tools.get_module_class(test_dir, 'bias_pct')()
 
     assert metric_obj.compute(5, 4) == -20
 
 
 def test_series_bias_pct():
 
-    metric_obj = load_obj('bias_pct')
+    metric_obj = module_tools.get_module_class(test_dir, 'bias_pct')()
 
     assert metric_obj.compute(x_eg, y_eg) == -10
 
 
 def test_mae():
 
-    metric_obj = load_obj('mae')
+    # metric_obj = load_obj('mae')
+    metric_obj = module_tools.get_module_class(test_dir, 'mae')()
 
     assert metric_obj.compute(5, 4) == 1
 
 
 def test_series_mae():
 
-    metric_obj = load_obj('mae')
+    metric_obj = module_tools.get_module_class(test_dir, 'mae')()
 
     assert metric_obj.compute(x_eg, y_eg) == 5.2
 
 
 def test_mae_pct():
 
-    metric_obj = load_obj('mae_pct')
+    # metric_obj = load_obj('mae_pct')
+    metric_obj = module_tools.get_module_class(test_dir, 'mae_pct')()
 
     assert metric_obj.compute(5, 4) == 20
 
 
 def test_series_mae_pct():
 
-    metric_obj = load_obj('mae_pct')
+    metric_obj = module_tools.get_module_class(test_dir, 'mae_pct')()
 
     assert metric_obj.compute(x_eg, y_eg) == 190
 
 
 def test_series_rmse():
 
-    metric_obj = load_obj('rmse')
+    # metric_obj = load_obj('rmse')
+    metric_obj = module_tools.get_module_class(test_dir, 'rmse')()
 
     result = metric_obj.compute(x_eg, y_eg)
 
@@ -87,7 +93,8 @@ def test_series_rmse():
 
 def test_series_crmse():
 
-    metric_obj = load_obj('crmse')
+    # metric_obj = load_obj('crmse')
+    metric_obj = module_tools.get_module_class(test_dir, 'crmse')()
 
     result = metric_obj.compute(x_eg, y_eg)
 

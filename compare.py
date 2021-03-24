@@ -14,6 +14,8 @@ import numpy as np
 import pandas as pd
 import itertools
 
+from tools import module_tools
+
 config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
 # config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
 
@@ -24,17 +26,6 @@ conf = yaml.load(open(config_file), Loader=yaml.FullLoader)
 base = conf['base']
 comp = conf['comp']
 p_curve = conf['power_curve']
-
-print(p_curve)
-
-
-# Load the module t class with the name s
-def get_module_class(t, s):
-
-    m = importlib.import_module('.'.join([t, s]))
-
-    return getattr(m, s)
-
 
 # Apply a series of transformative modules
 def apply_trans(ts, modlist):
@@ -47,7 +38,9 @@ def apply_trans(ts, modlist):
 
 
 # Pre-load all the metric modules into an array
-metrics = [get_module_class('metrics', m)() for m in conf['metrics']]
+# metrics = [get_module_class('metrics', m)() for m in conf['metrics']]
+metrics = [module_tools.get_module_class('metrics', m)()
+           for m in conf['metrics']]
 
 print('validation start time:', conf['time']['window']['lower'])
 print('validation end time:', conf['time']['window']['upper'])
@@ -55,9 +48,9 @@ print('location:', conf['location'])
 print('baseline dataset:', base['name'])
 print('variable:', conf['plot']['var'])
 
-crosscheck_ts = get_module_class('qc', 'crosscheck_ts')(conf)
+crosscheck_ts = module_tools.get_module_class('qc', 'crosscheck_ts')(conf)
 
-plotting = get_module_class('plotting', 'plot_data')(conf)
+plotting = module_tools.get_module_class('plotting', 'plot_data')(conf)
 
 all_lev_df = pd.DataFrame()
 
@@ -75,11 +68,9 @@ for lev in conf['levels']['height_agl']:
     print('********** for '+base['name']+': **********')
 
     # run __init__
-    base['input'] = get_module_class('inputs',
-                                     base['function'])(base['path'],
-                                                       base['var'],
-                                                       base['target_var']
-                                                       )
+    base['input'] = module_tools.get_module_class('inputs', base['function'])(
+        base['path'], base['var'], base['target_var']
+        )
 
     base['data'] = base['input'].get_ts(lev, base['freq'], base['flag'])
 
@@ -89,10 +80,9 @@ for lev in conf['levels']['height_agl']:
         print('********** for '+c['name']+': **********')
 
         # run __init__
-        c['input'] = get_module_class('inputs',
-                                      c['function'])(c['path'], c['var'],
-                                                     c['target_var']
-                                                     )
+        c['input'] = module_tools.get_module_class('inputs', c['function'])(
+            c['path'], c['var'], c['target_var']
+            )
 
         c['data'] = c['input'].get_ts(conf['location'], lev, c['freq'],
                                       c['flag']
@@ -198,7 +188,7 @@ for ind, c in enumerate(comp):
 
         # print(hh_df.head())
 
-        pc_csv = get_module_class('inputs', p_curve['function'])(
+        pc_csv = module_tools.get_module_class('inputs', p_curve['function'])(
             p_curve['path'], p_curve['file'], p_curve['ws'],
             p_curve['power'], hhws_df, p_curve['hub_height'], conf
             )
