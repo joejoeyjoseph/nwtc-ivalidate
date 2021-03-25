@@ -40,7 +40,7 @@ class plot_data:
 
         plt.show()
 
-    def plot_pair_scatter(self, df, lev):
+    def plot_pair_scatter(self, df, lev, self_units=True):
 
         onetoone_c = 'grey'
         fit_c = 'green'
@@ -60,8 +60,15 @@ class plot_data:
             plt.plot(xy1to1, xy1to1, c=onetoone_c, linestyle='--')
             plt.text(0.95, 0.9, '1:1', c=onetoone_c, transform=ax.transAxes)
 
-            plt.xlabel(pair[0]+' ('+self.units+')')
-            plt.ylabel(pair[1]+' ('+self.units+')')
+            if self_units is True:
+                plt.xlabel(pair[0]+' ('+self.units+')')
+                plt.ylabel(pair[1]+' ('+self.units+')')
+            else:
+                plt.xlabel(pair[0])
+                plt.ylabel(pair[1])
+
+            # plt.xlabel(pair[0]+' ('+self.units+')')
+            # plt.ylabel(pair[1]+' ('+self.units+')')
             # plt.title(self.var+' at '+str(lev)+' '+self.lev_units
             #           + ' a.g.l., r = '+str(round(corr, 3))
             #           )
@@ -90,6 +97,7 @@ class plot_data:
                       + ' a.g.l. \n linear fit: '+pair[0]+' = '
                       + str(round(coeffs[0], 3))
                       + ' * '+pair[1]+' + '+str(round(coeffs[1], 3))
+                      + r'$, R{^2} = $'+str(round(r2, 3))
             )
 
             plt.show()

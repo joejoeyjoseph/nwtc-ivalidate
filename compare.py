@@ -124,16 +124,18 @@ for ind, c in enumerate(comp):
 
         power_df = pc_csv.get_power()
 
-        # plot simulated power curves, not extremely useful
-        # p_curve['input'].plot_pc()
-        pc_csv.plot_power_ts()
-
         results = eval_tools.append_results(results, base, c, conf)
 
         cal_print_metrics.run(
             power_df, metrics, results, ind, c, conf, base,
             p_curve['hub_height']
             )
+        
+        # plot simulated power curves, not extremely useful
+        # p_curve['input'].plot_pc()
+        pc_csv.plot_power_ts()
+
+        pc_csv.plot_power_scatter()
 
     else:
 

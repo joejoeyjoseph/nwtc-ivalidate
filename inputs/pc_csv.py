@@ -22,6 +22,8 @@ class pc_csv:
         self.hh = hub_height
         self.conf = conf
         self.conf['plot']['var'] = self.power
+        self.plotting = eval_tools.get_module_class('plotting', 'plot_data')(
+            self.conf)
 
     def get_power(self):
 
@@ -59,7 +61,9 @@ class pc_csv:
 
     def plot_power_ts(self):
 
-        plotting = eval_tools.get_module_class('plotting', 'plot_data')(
-            self.conf)
+        self.plotting.plot_ts_line(self.power_df, self.hh, self_units=False)
 
-        plotting.plot_ts_line(self.power_df, self.hh, self_units=False)
+    def plot_power_scatter(self):
+
+        self.plotting.plot_pair_scatter(self.power_df, self.hh,
+                                        self_units=False)
