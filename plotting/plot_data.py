@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
+# from scipy import stats
 
 
 class plot_data:
@@ -41,7 +42,12 @@ class plot_data:
 
     def plot_pair_scatter(self, df, lev):
 
+        onetoone_c = 'grey'
+        fit_c = 'green'
+
         for pair in itertools.combinations(df.columns, 2):
+
+            fig, ax = plt.subplots()
 
             plt.scatter(df[pair[0]], df[pair[1]], c='k')
 
@@ -51,13 +57,40 @@ class plot_data:
             line_min = np.nanmin([df[pair[0]], df[pair[1]]])
             line_max = np.nanmax([df[pair[0]], df[pair[1]]])
             xy1to1 = np.linspace(line_min*0.9, line_max*1.1)
-            plt.plot(xy1to1, xy1to1, c='grey', linestyle='--')
+            plt.plot(xy1to1, xy1to1, c=onetoone_c, linestyle='--')
+            plt.text(0.95, 0.9, '1:1', c=onetoone_c, transform=ax.transAxes)
 
             plt.xlabel(pair[0]+' ('+self.units+')')
             plt.ylabel(pair[1]+' ('+self.units+')')
+            # plt.title(self.var+' at '+str(lev)+' '+self.lev_units
+            #           + ' a.g.l., r = '+str(round(corr, 3))
+            #           )
+
+            compute_df = df.dropna()
+            x_fit = compute_df[pair[0]]
+            y_fit = compute_df[pair[1]]
+
+            coeffs = np.polyfit(x_fit, y_fit, 1)
+            model_fn = np.poly1d(coeffs)
+
+            yhat = model_fn(x_fit)
+            ybar = np.sum(y_fit)/len(y_fit)
+            ssreg = np.sum((yhat - ybar)**2)
+            sstot = np.sum((y_fit - ybar)**2)
+            r2 = ssreg/sstot
+
+            # for linear regression, this works too
+            # slope, intercept, r_value, p_value, std_err = stats.linregress(
+            #     x_fit, y_fit)
+
+            x_s = np.arange(compute_df.min().min(), compute_df.max().max())
+            plt.plot(x_s, model_fn(x_s), color=fit_c)
+
             plt.title(self.var+' at '+str(lev)+' '+self.lev_units
-                      + ' a.g.l., r = '+str(round(corr, 3))
-                      )
+                      + ' a.g.l. \n linear fit: '+pair[0]+' = '
+                      + str(round(coeffs[0], 3))
+                      + ' * '+pair[1]+' + '+str(round(coeffs[1], 3))
+            )
 
             plt.show()
 

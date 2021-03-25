@@ -13,8 +13,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 
-from tools import eval_tools
-from metrics import cal_print_metrics
+from tools import eval_tools, cal_print_metrics
 
 # config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
 config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
