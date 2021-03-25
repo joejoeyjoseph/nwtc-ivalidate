@@ -67,16 +67,11 @@ class plot_data:
                 plt.xlabel(pair[0])
                 plt.ylabel(pair[1])
 
-            # plt.xlabel(pair[0]+' ('+self.units+')')
-            # plt.ylabel(pair[1]+' ('+self.units+')')
-            # plt.title(self.var+' at '+str(lev)+' '+self.lev_units
-            #           + ' a.g.l., r = '+str(round(corr, 3))
-            #           )
-
             compute_df = df.dropna()
             x_fit = compute_df[pair[0]]
             y_fit = compute_df[pair[1]]
 
+            # np.polyfit(deg=1) is linear regression
             coeffs = np.polyfit(x_fit, y_fit, 1)
             model_fn = np.poly1d(coeffs)
 
@@ -93,12 +88,13 @@ class plot_data:
             x_s = np.arange(compute_df.min().min(), compute_df.max().max())
             plt.plot(x_s, model_fn(x_s), color=fit_c)
 
+            # linear equation for title
             plt.title(self.var+' at '+str(lev)+' '+self.lev_units
                       + ' a.g.l. \n linear fit: '+pair[0]+' = '
                       + str(round(coeffs[0], 3))
                       + ' * '+pair[1]+' + '+str(round(coeffs[1], 3))
                       + r'$, R{^2} = $'+str(round(r2, 3))
-            )
+                      )
 
             plt.show()
 
