@@ -16,8 +16,8 @@ import pandas as pd
 
 from tools import eval_tools, cal_print_metrics
 
-config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
-# config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
+# config_file = str(pathlib.Path(os.getcwd()).parent)+'/config.yaml'
+config_file = str(pathlib.Path(os.getcwd()).parent)+'/config_test.yaml'
 
 sys.path.append('.')
 
