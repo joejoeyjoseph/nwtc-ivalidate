@@ -1,18 +1,18 @@
-# tools for codebase
+# This script contains tools for the codebase.
 
 import importlib
 
 
-# Load the module t class with the name s
-def get_module_class(t, s):
+def get_module_class(d, c):
+    """Load module m in directory d with the class name c."""
 
-    m = importlib.import_module('.'.join([t, s]))
+    m = importlib.import_module('.'.join([d, c]))
 
-    return getattr(m, s)
+    return getattr(m, c)
 
 
-# Apply a series of transformative modules
 def apply_trans(ts, modlist):
+    """Apply a series of transformative modules."""
 
     for m in modlist:
 
@@ -22,6 +22,7 @@ def apply_trans(ts, modlist):
 
 
 def append_results(results, base, c, conf):
+    """Append results before calculating metrics."""
 
     results.append({'truth name': base['name'],
                     'model name': c['name'],

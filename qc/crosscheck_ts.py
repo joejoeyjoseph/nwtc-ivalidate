@@ -1,19 +1,21 @@
-# perform crosscheck of data
-
-# Joseph Lee <joseph.lee@pnnl.gov>
+# Perform crosscheck of two datasets
 
 import pandas as pd
 import numpy as np
 
 
 class crosscheck_ts:
+    """Crosscheck time series of two datasets."""
 
     def __init__(self, conf):
 
-        self.upper = conf['time']["window"]["upper"]
-        self.lower = conf['time']["window"]["lower"]
+        self.upper = conf['time']['window']['upper']
+        self.lower = conf['time']['window']['lower']
 
     def trim_ts(self, ts):
+        """Trim time series to within upper and lower limits,
+        as declared by users.
+        """
 
         ts = ts.loc[ts.index >= self.lower]
         ts = ts.loc[ts.index <= self.upper]
@@ -21,12 +23,16 @@ class crosscheck_ts:
         return ts
 
     def align_time(self, base, comp):
+        """Align datetime indices of baseline and comparison datasets.
+        When the length of the resultant combine data frame does not match
+        the user-defined, desired data length, print error messages.
+        """
 
         base = self.trim_ts(base)
         comp = self.trim_ts(comp)
 
-        # match time series data frequencies
-        # base ts as 1st column
+        # Match time series data frequencies
+        # Baseline time series as 1st column
         combine_df = pd.merge(base, comp, left_index=True, right_index=True)
 
         t_min = combine_df.index.min()
@@ -60,6 +66,7 @@ class crosscheck_ts:
             print('DATA: FROM '+str(t_min)+' TO '+str(t_max))
             print('!!!!!!!!!!')
 
+        # Correct
         if len(combine_df) == desired_len:
 
             pass

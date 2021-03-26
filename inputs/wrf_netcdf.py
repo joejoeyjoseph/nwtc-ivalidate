@@ -1,12 +1,11 @@
-# netcdf.py
+# This is a basic parser for WRF NetCDF data.
 #
-# This is a basic parser for NetCDF data.
+# This input parser expects to be given a directory filled with netcdf
+# files - each a grid at one particular time.
 #
-# This input parser expects to be given a directory filled with netcdf files - each a grid at one particular time
-# we expect that the file has a field called XLAT which is a matrix of latitude values for the grid and
-# XLONG which is a matrix of longitude values for the grid.
-#
-# Joseph Lee <joseph.lee@pnnl.gov>
+# We expect that the file has a field called XLAT which is a matrix of
+# latitude values for the grid and XLONG which is a matrix of longitude
+# values for the grid.
 
 import os
 import pathlib
@@ -19,6 +18,9 @@ from qc import check_input_data
 
 
 class wrf_netcdf:
+    """WRF data class, using data from NetCDF files.
+    Each NetCDF file should contain 1 time step of data.
+    """
 
     def __init__(self, path, var, target_var):
 
@@ -26,14 +28,21 @@ class wrf_netcdf:
         self.var = var
         self.target_var = target_var
 
-    # for WRF MW case (extracted from Eagle)
+    # For WRF mountain wave demo case
     def get_ij(self, ih, loc):
+        """Return data index (i and j) for nc file at a specified target
+        location.
+        """
 
         lat = np.array(ih['XLAT'])
         lon = np.array(ih['XLONG'])
 
-        # if lat/lon were arrays (instead of matrixes) something like this would work:
-        # d = np.fromfunction(lambda x,y: (lon[x] - loc['lon'])**2 + (lat[y] - loc['lat'])**2, (len(lon), len(lat)), dype=float)
+        # If lat/lon were arrays (instead of matrixes)
+        # something like this would work:
+        # d = np.fromfunction(lambda x,y: (lon[x] - loc['lon'])**2
+        # + (lat[y] - loc['lat'])**2, (len(lon), len(lat)), dype=float)
+
+        # This is most appropriate for Equator coordinates
         d = (lat - loc['lat'])**2 + (lon - loc['lon'])**2
 
         i, j = np.unravel_index(np.argmin(d), d.shape)
@@ -41,10 +50,11 @@ class wrf_netcdf:
         return i, j
 
     def get_ts(self, loc, lev, freq, flag):
+        """Get time series at a location at a certain height."""
 
         df = pd.DataFrame({'t': [], self.target_var: []})
 
-        # to print an empty line before masked value error messages
+        # To print an empty line before masked value error messages
         mask_i = 0
 
         for file in os.listdir(self.path):
@@ -66,6 +76,7 @@ class wrf_netcdf:
             ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
             data.close()
+
             df = df.append([{'t': t, self.target_var: ws}])
 
         df = df.set_index('t').sort_index()

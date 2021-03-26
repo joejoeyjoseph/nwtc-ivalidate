@@ -1,11 +1,20 @@
+# Functions that check for irregularies in input data.
+
 import os
 import numpy as np
 import pandas as pd
 
+# For debugging
 # pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
 
 def convert_mask_to_nan(var, t, mask_i):
+    """Convert masked values in data to NaNs.
+
+    Keyword arguments:
+    mask_i -- Its default is 0. If mask_i is larger than 0, the code prints an
+    empty line before printing all the masked values in the data.
+    """
 
     if np.ma.is_masked(var):
 
@@ -22,6 +31,10 @@ def convert_mask_to_nan(var, t, mask_i):
 
 
 def convert_flag_to_nan(var, flag, t):
+    """When the data contains the user-defined flag value.
+    Print error message.
+    Convert flagged values to NaNs.
+    """
 
     if var == flag:
 
@@ -32,6 +45,10 @@ def convert_flag_to_nan(var, flag, t):
 
 
 def check_duplicate_ind_remove(df):
+    """When the data contain duplicated values.
+    Keep the first entry.
+    Remove the rest.
+    """
 
     if df.index.has_duplicates:
 
@@ -52,6 +69,11 @@ def check_duplicate_ind_remove(df):
 
 
 def check_missing_ind_add_nan(df, t_min, t_max, freq):
+    """Create an ideal time series with start and end times.
+    Match ideal datetime index with input data.
+    Detect missing values in input data.
+    Replace missing values with NaNs.
+    """
 
     ideal = pd.date_range(start=t_min, end=t_max, freq=str(freq)+'min')
     with_data = ideal.isin(df.index)
@@ -77,6 +99,12 @@ def check_missing_ind_add_nan(df, t_min, t_max, freq):
 
 
 def verify_data_file_count(df, var, path, freq, updated_len=None):
+    """Verify the number of input data files match the user-defined,
+    desired data length for analysis.
+    Match actual input data frequency with user-defined data frequency.
+    Check missing and duplicating values in input data.
+    Return unique and continuous data for analysis.
+    """
 
     t_min = df.index.min()
     t_max = df.index.max()
@@ -91,12 +119,11 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         print('AND USER-INPUT FREQUENCY DO NOT MATCH')
         print('!!!!!!!!!!')
 
-    # use data file number in path as a check on df length
+    # Use data file number in path as a check on data frame length
     data_len_check = len(os.listdir(path))
 
-    # after check_duplicate_ind_remove is called
+    # After check_duplicate_ind_remove is called
     if updated_len is not None:
-
         data_len_check = updated_len
 
     diff_minute = (t_max - t_min).total_seconds() / 60.0
@@ -122,28 +149,28 @@ def verify_data_file_count(df, var, path, freq, updated_len=None):
         print('AND USER-INPUT DATA FREQUENCY ('+str(freq)+')')
         print('!!!!!!!!!!')
 
-        # have duplicated rows in df
+        # Data frame contains duplicated rows
         if data_len_check > desired_len:
 
             df = check_duplicate_ind_remove(df)
 
             print()
             print('verify data again...')
-            # recursion, to verify the data again
+            # Recursion, to verify the data again
             df = verify_data_file_count(df, var, path, freq,
                                         updated_len=len(df)
                                         )
 
             return df
 
-        # have missing rows in df
+        # Data frame contains missing rows
         elif data_len_check < desired_len:
 
             df = check_missing_ind_add_nan(df, t_min, t_max, freq)
 
             print()
             print('verify data again...')
-            # recursion, to verify the data again
+            # Recursion, to verify the data again
             df = verify_data_file_count(df, var, path, freq,
                                         updated_len=len(df)
                                         )

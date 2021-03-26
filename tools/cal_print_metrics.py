@@ -1,10 +1,16 @@
-# calculate and print metrics results
+# This script calculates and prints metrics results.
 
 import numpy as np
 import itertools
 
 
 def run(combine_df, metrics, results, ind, c, conf, base, lev):
+    """Calculate metrics and print results.
+    Remove NaNs in data frame.
+    For each data column combination, split into baseline and
+    compare data series.
+    Calculate and print metrics, as listed in the yaml file.
+    """
 
     compute_df = combine_df.dropna()
 
@@ -19,11 +25,11 @@ def run(combine_df, metrics, results, ind, c, conf, base, lev):
     print('hence, only use '+str(len(compute_df))
           + ' time steps in data to calculate metrics')
 
-    # for future purposes,
-    # in case of reading in mulitple compare data columns
+    # For future purposes,
+    # In case of reading in mulitple compare data columns
     for pair in itertools.combinations(compute_df.columns, 2):
 
-        # baseline should be the 1st (Python's 0th) column
+        # Baseline should be the 1st (Python's 0th) column
         x = compute_df[pair[0]]
         y = compute_df[pair[1]]
 
@@ -45,13 +51,13 @@ def run(combine_df, metrics, results, ind, c, conf, base, lev):
     print()
 
     for key, val in results[0].items():
-        if key != 'path':
-            if isinstance(val, float):
 
-                end_units = ''
-                suffix_pct = 'pct'
+        if isinstance(val, float):
 
-                if str(key).endswith(suffix_pct):
-                    end_units = '%'
+            end_units = ''
+            suffix_pct = 'pct'
 
-                print(str(key)+': '+str(np.round(val, 3))+end_units)
+            if str(key).endswith(suffix_pct):
+                end_units = '%'
+
+            print(str(key)+': '+str(np.round(val, 3))+end_units)

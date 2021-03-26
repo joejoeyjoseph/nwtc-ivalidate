@@ -1,8 +1,4 @@
-# netcdf.py
-#
-# This is a basic parser for NetCDF data.
-#
-# Joseph Lee <joseph.lee@pnnl.gov>
+# This is a basic parser for sodar NetCDF data.
 
 import os
 import pathlib
@@ -15,6 +11,9 @@ from qc import check_input_data
 
 
 class sodar_netcdf:
+    """Sodar data class, using data from NetCDF files.
+    Each NetCDF file should contain 1 time step of data.
+    """
 
     def __init__(self, path, var, target_var):
 
@@ -23,10 +22,11 @@ class sodar_netcdf:
         self.target_var = target_var
 
     def get_ts(self, lev, freq, flag):
+        """Get time series at a certain height."""
 
         df = pd.DataFrame({'t': [], self.target_var: []})
 
-        # to print an empty line before masked value error messages
+        # To print an empty line before masked value error messages
         mask_i = 0
 
         for file in os.listdir(self.path):
@@ -44,6 +44,7 @@ class sodar_netcdf:
             ws = check_input_data.convert_flag_to_nan(ws, flag, t)
 
             data.close()
+
             df = df.append([{'t': t, self.target_var: ws}])
 
         df = df.set_index('t').sort_index()

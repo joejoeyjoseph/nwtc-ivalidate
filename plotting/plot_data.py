@@ -1,17 +1,15 @@
-# plot_data.py
+# This script contains data plotting functions.
 #
-# Plot data
-#
-# Joseph Lee <joseph.lee@pnnl.gov>
+# This module is also called in other scripts.
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import itertools
-# from scipy import stats
 
 
 class plot_data:
+    """Class for plotting 1 dimensional data at 1 height level."""
 
     def __init__(self, conf):
 
@@ -19,30 +17,36 @@ class plot_data:
         self.lev_units = conf['levels']['height_units']
 
         if conf['plot']['units'] == 'ms-1':
-
             self.units = r'm $s^{-1}$'
 
     def plot_ts_line(self, df, lev, self_units=True):
+        """Represent time series for each data column as a line,
+        combine the lines in one plot.
+        """
 
         for col in df.columns:
-
             plt.plot(df.index, df[col], label=col)
 
         plt.xticks(rotation=90)
         plt.legend()
 
         plt.xlabel('time')
+
         if self_units is True:
             plt.ylabel(self.var+' ('+self.units+')')
         else:
             plt.ylabel(self.var)
+
         plt.title(self.var+' at '+str(lev)+' m a.g.l.')
 
         plt.show()
 
     def plot_pair_scatter(self, df, lev, self_units=True):
+        """Generate scatter plots for each column pair."""
 
+        # 1:1 line and text color
         onetoone_c = 'grey'
+        # Best fit line color
         fit_c = 'green'
 
         for pair in itertools.combinations(df.columns, 2):
@@ -51,12 +55,10 @@ class plot_data:
 
             plt.scatter(df[pair[0]], df[pair[1]], c='k')
 
-            cal_df = df.dropna()
-            corr = np.corrcoef(cal_df[pair[0]], cal_df[pair[1]])[0, 1]
-
             line_min = np.nanmin([df[pair[0]], df[pair[1]]])
             line_max = np.nanmax([df[pair[0]], df[pair[1]]])
             xy1to1 = np.linspace(line_min*0.9, line_max*1.1)
+
             plt.plot(xy1to1, xy1to1, c=onetoone_c, linestyle='--')
             plt.text(0.95, 0.9, '1:1', c=onetoone_c, transform=ax.transAxes)
 
@@ -75,20 +77,23 @@ class plot_data:
             coeffs = np.polyfit(x_fit, y_fit, 1)
             model_fn = np.poly1d(coeffs)
 
+            # Calculate R^2 for the fit
             yhat = model_fn(x_fit)
             ybar = np.sum(y_fit)/len(y_fit)
             ssreg = np.sum((yhat - ybar)**2)
             sstot = np.sum((y_fit - ybar)**2)
             r2 = ssreg/sstot
 
-            # for linear regression, this works too
+            # For linear regression, this works too
+            # from scipy import stats
             # slope, intercept, r_value, p_value, std_err = stats.linregress(
             #     x_fit, y_fit)
 
             x_s = np.arange(compute_df.min().min(), compute_df.max().max())
+
             plt.plot(x_s, model_fn(x_s), color=fit_c)
 
-            # linear equation for title
+            # Linear equation for title
             plt.title(self.var+' at '+str(lev)+' '+self.lev_units
                       + ' a.g.l. \n linear fit: '+pair[0]+' = '
                       + str(round(coeffs[0], 3))
@@ -99,9 +104,9 @@ class plot_data:
             plt.show()
 
     def plot_histogram(self, df, lev):
+        """Generate histogram for each data column."""
 
         for col in df.columns:
-
             plt.hist(df[col], bins=15, alpha=0.4, label=col)
 
         plt.legend()
