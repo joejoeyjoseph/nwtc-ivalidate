@@ -1,10 +1,8 @@
-# bias_pct.py
-#
 # This is a simple average percent bias calculation,
 # bias % = mean(100 * (y - x) / x),
 # assuming x is the truth.
 #
-# Joseph Lee <joseph.lee@pnnl.gov>
+# Mask invalid values to calculate percentage, in case x is 0.
 
 import numpy as np
 
@@ -13,11 +11,17 @@ class bias_pct:
 
     def compute(self, x, y):
 
-        # print(x)
-        # print(y)
-
-        # x = np.ma.masked_invalid(x)
-
         # x is baseline
-        # return float(np.mean(100 * (y - x) / x))
-        return float(np.mean(100 * np.ma.masked_invalid((y - x) / x)))
+        fraction_array = np.ma.masked_invalid((y - x) / x)
+
+        invalid_num = fraction_array.mask.sum()
+
+        if invalid_num > 0:
+
+            print()
+            print('- in calculating bias percentage, '
+                  + str(invalid_num)+' invalid data points, which would have')
+            print('led to undefined results '
+                  + '(e.g., division by zero), are ignored.')
+
+        return float(np.mean(100 * fraction_array))

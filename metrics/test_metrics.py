@@ -1,4 +1,4 @@
-# run unit tests
+# This script runs unit tests for metrics files.
 
 import importlib
 import pandas as pd
@@ -8,6 +8,7 @@ from tools import eval_tools
 
 test_dir = 'metrics'
 
+# Example data series
 x_eg = pd.Series([2, 2, 2, 2, 16])
 y_eg = pd.Series([4, 5, 6, -7, 8])
 

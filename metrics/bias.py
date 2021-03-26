@@ -1,10 +1,6 @@
-# bias.py
-#
 # This is a simple average bias calculation,
 # bias = mean(y - x),
 # assuming x is the truth.
-#
-# Joseph Lee <joseph.lee@pnnl.gov>
 
 import numpy as np
 
