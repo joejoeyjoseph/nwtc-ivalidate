@@ -1,6 +1,12 @@
 NREL NWTC iValidate
 ===================
 
+**************************************************
+**************************************************
+NOTICE: THIS VERSION OF THE CODE IS NO LONGER UNDER ACTIVE DEVELOPMENT. FOR THE CURRENT VERSION OF I-VALIDATE, PLEASE VISIT [https://github.com/joejoeyjoseph/i-validate](https://github.com/joejoeyjoseph/i-validate).
+**************************************************
+**************************************************
+
 This is a bit of infrastructure code to allow comparison of timeseries from
 arbitrary data sources using arbitrary metrics. It is designed to be simple,
 and extensible.
